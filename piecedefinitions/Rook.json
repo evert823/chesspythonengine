@@ -1,0 +1,9 @@
+{
+    "symbol": "R",
+    "name": "Rook",
+    "IsDivergent": false,
+    "CheckDuplicateMoves": false,
+    "EstimatedValue": 5.0,
+    "stepleapmovevectors": [],
+    "slidemovevectors": [{"x": 0, "y": 1}, {"x": 1, "y": 0}, {"x": 0, "y": -1}, {"x": -1, "y": 0}]
+}

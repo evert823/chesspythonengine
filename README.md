@@ -1,0 +1,2 @@
+- Chess program in Python
+- The unittests reside in other repo "chesspython" https://github.com/evert823/chesspython/tree/main/unittests
