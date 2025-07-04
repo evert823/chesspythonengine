@@ -8,9 +8,7 @@ class chesspiecetype:
         #Rule: if IsDivergent is false then capturevectors will be ignored, only movevectors will be looked at
         self.CheckDuplicateMoves = False
         self.EstimatedValue = 0.0
-        self.stepleapmovevectors = []
         self.slidemovevectors = []
-        self.stepleapcapturevectors = []
         self.slidecapturevectors = []
 #---------------------------------------------------------------------------------------------------------
     def VectorSetFromjson(self, mydict):
@@ -46,10 +44,8 @@ class chesspiecetype:
         self.CheckDuplicateMoves = piecedict["CheckDuplicateMoves"]
         self.EstimatedValue = piecedict["EstimatedValue"]
 
-        self.stepleapmovevectors = self.VectorSetFromjson(piecedict["stepleapmovevectors"]).copy()
         self.slidemovevectors = self.VectorSetFromjson(piecedict["slidemovevectors"]).copy()
         if self.IsDivergent == True:
-            self.stepleapcapturevectors = self.VectorSetFromjson(piecedict["stepleapcapturevectors"]).copy()
             self.slidecapturevectors = self.VectorSetFromjson(piecedict["slidecapturevectors"]).copy()
 #---------------------------------------------------------------------------------------------------------
     def SaveAsJsonFile(self, pfilename):
@@ -62,10 +58,8 @@ class chesspiecetype:
         piecedict["CheckDuplicateMoves"] = self.CheckDuplicateMoves
         piecedict["EstimatedValue"] = self.EstimatedValue
 
-        #piecedict["stepleapmovevectors"] = self.VectorSetTojson(self.stepleapmovevectors).copy()
         piecedict["slidemovevectors"] = self.VectorSetTojson(self.slidemovevectors).copy()
         if self.IsDivergent == True:
-            #piecedict["stepleapcapturevectors"] = self.VectorSetTojson(self.stepleapcapturevectors).copy()
             piecedict["slidecapturevectors"] = self.VectorSetTojson(self.slidecapturevectors).copy()
 
         json.dump(piecedict, piecefile, indent=4)

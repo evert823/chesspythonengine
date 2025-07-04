@@ -234,11 +234,9 @@ class chessposition:
             for j in range(self.boardheight):
                 if ((self.squares[j][i] > 0 and self.colourtomove > 0) or
                     (self.squares[j][i] < 0 and self.colourtomove < 0)):
-                    SquaresAttackedByPMdup.extend(self.GetStepLeapAttacks(i, j, ppiecetypes))
                     SquaresAttackedByPMdup.extend(self.GetSlideAttacks(i, j, ppiecetypes))
                 if ((self.squares[j][i] > 0 and self.colourtomove < 0) or
                     (self.squares[j][i] < 0 and self.colourtomove > 0)):
-                    SquaresAttackedByPOdup.extend(self.GetStepLeapAttacks(i, j, ppiecetypes))
                     SquaresAttackedByPOdup.extend(self.GetSlideAttacks(i, j, ppiecetypes))
         self.SquaresAttackedByPM = []
         for x in SquaresAttackedByPMdup:
@@ -249,26 +247,13 @@ class chessposition:
             if x not in self.SquaresAttackedByPO:
                 self.SquaresAttackedByPO.append(x)
 #---------------------------------------------------------------------------------------------------------
-    def GetStepLeapAttacks(self, i, j, ppiecetypes):
-        SquaresAttacked = []
-        pt = ppiecetypes[abs(self.squares[j][i]) - 1]
-        if pt.IsDivergent == False:
-            lookatvectors = pt.stepleapmovevectors
-        else:
-            lookatvectors = pt.stepleapcapturevectors
-
-        for v in lookatvectors:
-            i2 = i + v[0]
-
-            if self.squares[j][i] > 0:
-                j2 = j + v[1]
-            else:
-                j2 = j - v[1]
-
-            if i2 >= 0 and i2 < self.boardwidth:
-                if j2 >= 0 and j2 < self.boardheight:
-                    SquaresAttacked.append((i2, j2))
-        return SquaresAttacked
+    def maxrange_exceeded(self, maxrangecounter, v):
+        #v[2] is the maxrange
+        if v[2] < 1:
+            return False
+        if maxrangecounter <= v[2]:
+            return False
+        return True
 #---------------------------------------------------------------------------------------------------------
     def GetSlideAttacks(self, i, j, ppiecetypes):
         SquaresAttacked = []
@@ -286,10 +271,12 @@ class chessposition:
                 j2 = j + v[1]
             else:
                 j2 = j - v[1]
+            maxrangecounter = 1
 
             blocked = False
             while (i2 >= 0 and i2 < self.boardwidth and
-                   j2 >= 0 and j2 < self.boardheight and blocked == False):
+                   j2 >= 0 and j2 < self.boardheight and blocked == False
+                   and self.maxrange_exceeded(maxrangecounter, v) == False):
                 
                 SquaresAttacked.append((i2, j2))
 
@@ -302,6 +289,7 @@ class chessposition:
                     j2 = j2 + v[1]
                 else:
                     j2 = j2 - v[1]
+                maxrangecounter += 1
         return SquaresAttacked
 #---------------------------------------------------------------------------------------------------------
     def InitializeMove(self, movei, pi1, pj1, pi2, pj2):
@@ -328,9 +316,7 @@ class chessposition:
             for j in range(self.boardheight):
                 if ((self.squares[j][i] > 0 and self.colourtomove > 0) or
                     (self.squares[j][i] < 0 and self.colourtomove < 0)):
-                    self.GetStepLeapMoves(i, j, ppiecetypes)
                     self.GetSlideMoves(i, j, ppiecetypes)
-                    self.GetStepLeapCaptures(i, j, ppiecetypes)
                     self.GetSlideCaptures(i, j, ppiecetypes)
                     self.GetPawn2StepMoves(ppiecetypes, i, j)
                     self.GetPawnEnPassantMoves(ppiecetypes, i, j)
@@ -342,27 +328,6 @@ class chessposition:
             sl.append(self.movelist[movei].ShortNotation(ppiecetypes))
         s = ",".join(sl)
         return s
-#---------------------------------------------------------------------------------------------------------
-    def GetStepLeapMoves(self, i, j, ppiecetypes):
-        #print(f"GetStepLeaveMoves({i},{j})")
-
-        pt = ppiecetypes[abs(self.squares[j][i]) - 1]
-
-        for v in pt.stepleapmovevectors:
-            i2 = i + v[0]
-
-            if self.colourtomove == 1:
-                j2 = j + v[1]
-            else:
-                j2 = j - v[1]
-
-            if i2 >= 0 and i2 < self.boardwidth:
-                if j2 >= 0 and j2 < self.boardheight:
-                    if self.squares[j2][i2] == 0:
-                        movei = self.movelist_totalfound
-                        self.InitializeMove(movei, i, j, i2, j2)
-                        self.movelist[movei].MovingPiece = self.squares[j][i]
-                        self.GetPromotion(movei, ppiecetypes)
 #---------------------------------------------------------------------------------------------------------
     def GetSlideMoves(self, i, j, ppiecetypes):
         #print(f"GetSlideMoves({i},{j})")
@@ -376,10 +341,12 @@ class chessposition:
                 j2 = j + v[1]
             else:
                 j2 = j - v[1]
+            maxrangecounter = 1
 
             blocked = False
             while (i2 >= 0 and i2 < self.boardwidth and
-                   j2 >= 0 and j2 < self.boardheight and blocked == False):
+                   j2 >= 0 and j2 < self.boardheight and blocked == False
+                   and self.maxrange_exceeded(maxrangecounter, v) == False):
                 if self.squares[j2][i2] == 0:
                     movei = self.movelist_totalfound
                     self.InitializeMove(movei, i, j, i2, j2)
@@ -394,33 +361,7 @@ class chessposition:
                     j2 = j2 + v[1]
                 else:
                     j2 = j2 - v[1]
-#---------------------------------------------------------------------------------------------------------
-    def GetStepLeapCaptures(self, i, j, ppiecetypes):
-        #print(f"GetStepLeaveCaptures({i},{j})")
-
-        pt = ppiecetypes[abs(self.squares[j][i]) - 1]
-        if pt.IsDivergent == False:
-            lookatvectors = pt.stepleapmovevectors
-        else:
-            lookatvectors = pt.stepleapcapturevectors
-
-        for v in lookatvectors:
-            i2 = i + v[0]
-
-            if self.colourtomove == 1:
-                j2 = j + v[1]
-            else:
-                j2 = j - v[1]
-
-            if i2 >= 0 and i2 < self.boardwidth:
-                if j2 >= 0 and j2 < self.boardheight:
-                    if ((self.squares[j2][i2] > 0 and self.squares[j][i] < 0) or
-                        (self.squares[j2][i2] < 0 and self.squares[j][i] > 0)):
-                        movei = self.movelist_totalfound
-                        self.InitializeMove(movei, i, j, i2, j2)
-                        self.movelist[movei].MovingPiece = self.squares[j][i]
-                        self.movelist[movei].IsCapture = True
-                        self.GetPromotion(movei, ppiecetypes)
+                maxrangecounter += 1
 #---------------------------------------------------------------------------------------------------------
     def GetSlideCaptures(self, i, j, ppiecetypes):
         #print(f"GetSlideCaptures({i},{j})")
@@ -439,10 +380,12 @@ class chessposition:
                 j2 = j + v[1]
             else:
                 j2 = j - v[1]
+            maxrangecounter = 1
 
             blocked = False
             while (i2 >= 0 and i2 < self.boardwidth and
-                   j2 >= 0 and j2 < self.boardheight and blocked == False):
+                   j2 >= 0 and j2 < self.boardheight and blocked == False
+                   and self.maxrange_exceeded(maxrangecounter, v) == False):
 
                 if ((self.squares[j2][i2] > 0 and self.squares[j][i] < 0) or
                     (self.squares[j2][i2] < 0 and self.squares[j][i] > 0)):
@@ -461,6 +404,7 @@ class chessposition:
                     j2 = j2 + v[1]
                 else:
                     j2 = j2 - v[1]
+                maxrangecounter += 1
 #---------------------------------------------------------------------------------------------------------
     def GetPromotion(self, movei, ppiecetypes):
         includepromote = False
