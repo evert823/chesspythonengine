@@ -1,3 +1,5 @@
+import sys
+sys.path.append(".\\classes")
 from chessgame import chessgame
 from datetime import datetime
 
