@@ -243,6 +243,20 @@ TestStalemate_n(mychessgame, "unittestgame", "08A_stalemate_2_black", 2)
 BaselinePerformance(mychessgame, "unittestgame", "07A_mate_4_white_BN", 8, 6)
 BaselinePerformance(mychessgame, "unittestgame", "07A_mate_4_black_BN", 8, 6)
 
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 7, 7), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 8, 8), False);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 7, 4), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 4, 0), False);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 4, 1), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_white", "Queen3", (4, 4, 2, 4), False);
+
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 7, 2), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 8, 1), False);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 7, 5), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 4, 9), False);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 4, 8), True);
+TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 2, 5), False);
+
 print("ALL UNITTESTS PASSED")
 
 print(datetime.now())
