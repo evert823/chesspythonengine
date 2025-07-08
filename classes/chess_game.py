@@ -1,14 +1,14 @@
 import json
-from chesspiecetype import chesspiecetype
-from chessmove import chessmove
-from chessposition import chessposition
+from classes.chess_piecetype import ChessPieceType
+from classes.chess_move import ChessMove
+from classes.chess_position import ChessPosition
 from datetime import datetime
 
-class chessgame:
+class ChessGame:
     def __init__(self, pworkpath):
         self.piecetypes = []
 
-        self.mainposition = chessposition()
+        self.mainposition = ChessPosition()
         self.workpath = pworkpath
 
         now = datetime.now()
@@ -24,7 +24,7 @@ class chessgame:
     def init_positionstack(self):
         self.positionstack.clear()
         for i in range(self.positionstack_size):
-            mypos = chessposition()
+            mypos = ChessPosition()
             mypos.ResetBoardsize(self.mainposition.boardwidth, self.mainposition.boardheight)
             self.positionstack.append(mypos)
         self.SynchronizePosition(self.mainposition, self.positionstack[0])
@@ -62,7 +62,7 @@ class chessgame:
         self.mainposition.SaveAsJsonFile(ppositionfilename, self.piecetypes)
 #---------------------------------------------------------------------------------------------------------
     def LoadPiece(self, ppiecename, pworkpath):
-        mytype = chesspiecetype()
+        mytype = ChessPieceType()
         mytype.LoadFromJsonFile("..\\chesspython\\piecedefinitions\\" + ppiecename + ".json")
         mytype.SaveAsJsonFile(f"{pworkpath}\\piecedefinitions_verify\\" + ppiecename + ".json")
         self.piecetypes.append(mytype)
@@ -200,7 +200,7 @@ class chessgame:
                 self.writelog(f"List before sorting : {self.positionstack[posidx].DisplayMovelist(self.piecetypes)}")
             movelist2 = []
             for movei in range(self.positionstack[posidx].movelist_totalfound):
-                mv = chessmove(0, 0, 0, 0)
+                mv = ChessMove(0, 0, 0, 0)
                 self.positionstack[posidx].SynchronizeChessmove(self.positionstack[posidx].movelist[movei], mv)
                 movelist2.append(mv)
             subresults_presort = []

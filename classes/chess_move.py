@@ -1,6 +1,6 @@
-import chesshelp
+from classes.chesshelp import chesshelp
 
-class chessmove:
+class ChessMove:
     def __init__(self, pi1, pj1, pi2, pj2):
         self.MovingPiece = 0
         self.coordinates = (pi1, pj1, pi2, pj2)
@@ -16,7 +16,7 @@ class chessmove:
                 return "0-0-0"
             else:
                 return "0-0"
-        s = chesshelp.chesshelp.PieceType2Str(self.MovingPiece, ppiecetypes).replace("-", "")
+        s = chesshelp.PieceType2Str(self.MovingPiece, ppiecetypes).replace("-", "")
         s += self.Coord2Squarename(self.coordinates[0], self.coordinates[1])
         if self.IsCapture == True:
             s += "x"
@@ -24,7 +24,7 @@ class chessmove:
             s += "-"
         s += self.Coord2Squarename(self.coordinates[2], self.coordinates[3])
         if self.PromoteToPiece != 0:
-            s += chesshelp.chesshelp.PieceType2Str(self.PromoteToPiece, ppiecetypes).replace("-", "")
+            s += chesshelp.PieceType2Str(self.PromoteToPiece, ppiecetypes).replace("-", "")
         if self.IsEnPassant == True:
             s += " e.p."
         return s

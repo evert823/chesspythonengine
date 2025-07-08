@@ -1,6 +1,4 @@
-import sys
-sys.path.append(".\\classes")
-from chessgame import chessgame
+from classes.chess_game import ChessGame
 from datetime import datetime
 
 def TestCastle(pchessgame, pgamefilename, ppositionfilename):
@@ -181,7 +179,7 @@ def BaselinePerformance(pchessgame, pgamefilename, ppositionfilename, n_plies, b
 
 mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
 myunittestpath = "..\\chesspython\\unittests\\"
-mychessgame = chessgame(mylocalpath)
+mychessgame = ChessGame(mylocalpath)
 
 print(datetime.now())
 TestCastle(mychessgame, "unittestgame", "01A_castle_white_01")

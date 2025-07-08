@@ -1,8 +1,8 @@
 import json
-import chesshelp
-from chessmove import chessmove
+from classes.chesshelp import chesshelp
+from classes.chess_move import ChessMove
 
-class chessposition:
+class ChessPosition:
     def __init__(self):
         self.boardwidth = -1
         self.boardheight = -1
@@ -54,7 +54,7 @@ class chessposition:
     def AllocateMovelist(self):
         self.movelist.clear()
         for i in range(self.movelist_allocated):
-            mv = chessmove(0, 0, 0, 0)
+            mv = ChessMove(0, 0, 0, 0)
             self.movelist.append(mv)
 #---------------------------------------------------------------------------------------------------------
     def LoadFromJsonFile(self, pfilename, ppiecetypes):
@@ -93,7 +93,7 @@ class chessposition:
             mysymbol = positiondict["squares"][rj].split("|")
             for i in range(self.boardwidth):
                 s = mysymbol[i].lstrip()
-                self.squares[j][i] = chesshelp.chesshelp.Str2PieceType(s, ppiecetypes)
+                self.squares[j][i] = chesshelp.Str2PieceType(s, ppiecetypes)
 #---------------------------------------------------------------------------------------------------------
     def SaveAsJsonFile(self, pfilename, ppiecetypes):
         #Convert class structure to json and save as json file
@@ -123,7 +123,7 @@ class chessposition:
             rj = (self.boardheight - 1) - j
             myvisualrank = ""
             for i in range(self.boardwidth):
-                mysymbol = chesshelp.chesshelp.PieceType2Str(self.squares[rj][i], ppiecetypes)
+                mysymbol = chesshelp.PieceType2Str(self.squares[rj][i], ppiecetypes)
                 while len(mysymbol) < 3:
                     mysymbol = " " + mysymbol
                 myvisualrank += mysymbol
@@ -163,7 +163,7 @@ class chessposition:
                 if fp[ci].isnumeric() == True:
                     csqi += int(fp[ci])
                 else:
-                    self.squares[rj][csqi] = chesshelp.chesshelp.Str2PieceType4FEN(fp[ci], ppiecetypes)
+                    self.squares[rj][csqi] = chesshelp.Str2PieceType4FEN(fp[ci], ppiecetypes)
                     csqi += 1
 #---------------------------------------------------------------------------------------------------------
     def PositionAsFEN(self, ppiecetypes):
@@ -177,7 +177,7 @@ class chessposition:
                     if vacantcount != 0:
                         fenpart += str(vacantcount)
                         vacantcount = 0
-                    mysymbol = chesshelp.chesshelp.PieceType2Str4FEN(self.squares[rj][i], ppiecetypes)
+                    mysymbol = chesshelp.PieceType2Str4FEN(self.squares[rj][i], ppiecetypes)
                     fenpart += mysymbol
                 if self.squares[rj][i] == 0:
                     vacantcount += 1
@@ -664,12 +664,12 @@ class chessposition:
                         if pt.name == "King":
                             pass
                         else:
-                            materialbalance += chesshelp.chesshelp.PieceType2Value(pi, ppiecetypes)
+                            materialbalance += chesshelp.PieceType2Value(pi, ppiecetypes)
                     else:
                         if pt.name == "King":
                             pass
                         else:
-                            materialbalance -= chesshelp.chesshelp.PieceType2Value(pi, ppiecetypes)
+                            materialbalance -= chesshelp.PieceType2Value(pi, ppiecetypes)
 
         if materialbalance > 8:
             myresult = 80.0

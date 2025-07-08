@@ -1,6 +1,6 @@
 import json
 
-class chesspiecetype:
+class ChessPieceType:
     def __init__(self):
         self.symbol = ''
         self.name = ''

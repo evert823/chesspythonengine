@@ -1,6 +1,5 @@
 import sys
-sys.path.append(".\\classes")
-from chessgame import chessgame
+from classes.chess_game import ChessGame
 from datetime import datetime
 
 def Test(pchessgame, pgamefilename, ppositionfilename, n_plies):
@@ -24,6 +23,6 @@ def Test(pchessgame, pgamefilename, ppositionfilename, n_plies):
     print(datetime.now())
 
 mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
-mychessgame = chessgame(mylocalpath)
+mychessgame = ChessGame(mylocalpath)
 
 Test(mychessgame, "unittestgame", "mate_3_fide_middle", 6)
