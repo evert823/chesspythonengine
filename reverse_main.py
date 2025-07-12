@@ -2,7 +2,7 @@ from classes.reverse_move_finder import ReverseMoveFinder
 
 myworkpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
 mypositionfilename = "test_reverse_move_finder"
-n_plies = 6
+n_plies = 1
 
 rmf = ReverseMoveFinder(myworkpath)
 rmf.MyChessGame.LoadFromJsonFile(".\\games\\unittestgame.json", f"{myworkpath}\\positions\\{mypositionfilename}.json")
@@ -17,3 +17,5 @@ try:
 except:
     mymvstr = "No move"
 print(f"Result of evaluation {n_plies} plies test_reverse_move_finder: {myval} {mymvstr}")
+
+rmf.GPPN(rmf.MyChessGame.positionstack[0])
