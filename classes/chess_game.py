@@ -275,7 +275,7 @@ class ChessGame:
 #---------------------------------------------------------------------------------------------------------
     def SwapBlackWhite(self, pposition):
         #For testing purposes - create same position with reversed colours and mirrored
-        myresultpos = chessposition()
+        myresultpos = ChessPosition()
 
         myresultpos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
 
