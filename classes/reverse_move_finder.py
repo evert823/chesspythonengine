@@ -123,7 +123,6 @@ class ReverseMoveFinder:
         #PREREQUISITE we have loaded our position into self.cgVerifyer.mainposition
 
         #TODO check if execute mv from self.cgVerifyer.mainposition --> self.MyChessGame.mainposition
-        #TODO check if we don't have pawns on incompatible ranks
 
         myval, mymvidx, _ = self.cgVerifyer.Calculation_n_plies(1)
         if self.cgVerifyer.mainposition.POKingIsInCheck() == True:
