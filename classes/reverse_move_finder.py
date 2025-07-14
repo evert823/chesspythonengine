@@ -27,6 +27,9 @@ class ReverseMoveFinder:
                     (pposition.squares[j][i] > 0 and pposition.colourtomove < 0)):
                     self.handle_piece(pposition, i, j)
                     self.handle_promotion(pposition, i, j)
+                    self.handle_pawn_2move(pposition, i, j)
+                    self.handle_enpassant_whitepawn(pposition, i, j)
+                    self.handle_enpassant_blackpawn(pposition, i, j)
         self.display_PNList()
 
     def manipulate_vector(self, pposition: ChessPosition, v):
@@ -80,6 +83,75 @@ class ReverseMoveFinder:
             v_c, v_r = self.manipulate_vector(pposition, v)
             self.handle_capture(pposition, i, j, v_r, mpi, ppi)
 
+    def handle_pawn_2move(self, pposition: ChessPosition, i, j):
+        mpi = pposition.squares[j][i]
+        if pposition.colourtomove > 0:
+            if j != pposition.boardheight - 4:
+                return
+            if mpi != self.black_pawn_mpi:
+                return
+        else:
+            if j != 3:
+                return
+            if mpi != self.white_pawn_mpi:
+                return
+        v = (0, 2, 1)
+        v_c, v_r = self.manipulate_vector(pposition, v)
+        self.handle_noncapture(pposition, i, j, v_r, mpi, 0)
+
+    def handle_enpassant_whitepawn(self, pposition: ChessPosition, i, j):
+        if pposition.colourtomove > 0:
+            return
+        mpi = pposition.squares[j][i]
+        if j != pposition.boardheight - 3:
+            return
+        if mpi != self.white_pawn_mpi:
+            return
+
+        pt = self.MyChessGame.piecetypes[abs(mpi) - 1]
+        for v in pt.slidecapturevectors:
+            v_c, v_r = self.manipulate_vector(pposition, v)
+            self.handle_enpassant_capture(pposition, i, j, v_r, mpi)
+
+    def handle_enpassant_blackpawn(self, pposition: ChessPosition, i, j):
+        if pposition.colourtomove < 0:
+            return
+        mpi = pposition.squares[j][i]
+        if j != 2:
+            return
+        if mpi != self.black_pawn_mpi:
+            return
+
+        pt = self.MyChessGame.piecetypes[abs(mpi) - 1]
+        for v in pt.slidecapturevectors:
+            v_c, v_r = self.manipulate_vector(pposition, v)
+            self.handle_enpassant_capture(pposition, i, j, v_r, mpi)
+
+    def handle_enpassant_capture(self, pposition: ChessPosition, i, j, v_r, mpi):
+        #mpi = moving piece
+        squareset = self.squares_from_vector(pposition, i, j, v_r)
+        for square in squareset:
+            i2 = square[0]
+            j2 = square[1]
+            self.MyChessGame.SynchronizePosition(pposition, self.cgVerifyer.mainposition)
+            self.cgVerifyer.mainposition.colourtomove = -1 * pposition.colourtomove
+            self.cgVerifyer.mainposition.squares[j][i] = 0
+            self.cgVerifyer.mainposition.squares[j2][i2] = mpi
+            sq = mpi * -1
+            self.cgVerifyer.mainposition.squares[j2][i] = sq
+            self.cgVerifyer.mainposition.precedingmove = (i, j2 - 2 * pposition.colourtomove, i, j2)
+            #print(f"precedingmove {self.cgVerifyer.mainposition.precedingmove}")
+            mv = ChessMove(i2, j2, i, j)
+            mv.MovingPiece = mpi
+            mv.IsCapture = True
+            mv.IsEnPassant = True
+            mv.othercoordinates = (i, j2, -1, -1)
+            if self.position_and_move_valid(mv) == True:
+                mypos = ChessPosition()
+                mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
+                self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
+                self.PNList.append((mypos, mv))
+
     def squares_from_vector(self, pposition: ChessPosition, i, j, v_r):
         squareset = []
         i2 = i + v_r[0]
@@ -119,10 +191,26 @@ class ReverseMoveFinder:
             return False
         return True
 
+    def pawns_on_ranks_valid(self, pposition: ChessPosition) -> bool:
+        for i in range(pposition.boardwidth):
+            for j in [0, pposition.boardheight - 1]:
+                if pposition.squares[j][i] == self.white_pawn_mpi:
+                    return False
+                if pposition.squares[j][i] == self.black_pawn_mpi:
+                    return False
+                if pposition.squares[j][i] == self.white_pawn_mpi:
+                    return False
+                if pposition.squares[j][i] == self.black_pawn_mpi:
+                    return False
+        return True
+
     def position_and_move_valid(self, mv: ChessMove) -> bool:
         #PREREQUISITE we have loaded our position into self.cgVerifyer.mainposition
 
         #TODO check if execute mv from self.cgVerifyer.mainposition --> self.MyChessGame.mainposition
+
+        if self.pawns_on_ranks_valid(self.cgVerifyer.mainposition) == False:
+            return False
 
         myval, mymvidx, _ = self.cgVerifyer.Calculation_n_plies(1)
         if self.cgVerifyer.mainposition.POKingIsInCheck() == True:
@@ -141,12 +229,6 @@ class ReverseMoveFinder:
 
     def handle_noncapture(self, pposition: ChessPosition, i, j, v_r, mpi, ppi):
         #mpi = moving piece, ppi = promoted piece (0 if there is no promotion)
-        if mpi == self.white_pawn_mpi:
-            if j < 2:
-                return
-        elif mpi == self.black_pawn_mpi:
-            if j > pposition.boardheight - 3:
-                return
 
         squareset = self.squares_from_vector(pposition, i, j, v_r)
         for square in squareset:
@@ -167,12 +249,6 @@ class ReverseMoveFinder:
 
     def handle_capture(self, pposition: ChessPosition, i, j, v_r, mpi, ppi):
         #mpi = moving piece, ppi = promoted piece (0 if there is no promotion)
-        if mpi == self.white_pawn_mpi:
-            if j < 2:
-                return
-        elif mpi == self.black_pawn_mpi:
-            if j > pposition.boardheight - 3:
-                return
 
         squareset = self.squares_from_vector(pposition, i, j, v_r)
         for square in squareset:
@@ -206,6 +282,9 @@ class ReverseMoveFinder:
             s += " captured piece "
             i2 = self.PNList[pni][1].coordinates[2]
             j2 = self.PNList[pni][1].coordinates[3]
+            if self.PNList[pni][1].IsEnPassant == True:
+                i2 = self.PNList[pni][1].othercoordinates[0]
+                j2 = self.PNList[pni][1].othercoordinates[1]
             sq = self.PNList[pni][0].squares[j2][i2]
             pt = self.MyChessGame.piecetypes[abs(sq) - 1]
             s += pt.name
@@ -216,7 +295,8 @@ class ReverseMoveFinder:
         for pni in range(len(self.PNList)):
             s = self.display_PNList_item(pni)
             #For now only display non-capture or Queen-capture
-            if s.find("captured piece") < 0 or s.endswith("captured piece Queen"):
+            if (s.find("captured piece") < 0 or s.endswith("captured piece Queen")
+                or s.endswith("captured piece Pawn")):
                 print(s)
             biglist.append(s)
         #print(biglist)
