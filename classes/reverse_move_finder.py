@@ -27,6 +27,7 @@ class ReverseMoveFinder:
                     (pposition.squares[j][i] > 0 and pposition.colourtomove < 0)):
                     self.handle_piece(pposition, i, j)
                     self.handle_promotion(pposition, i, j)
+                    self.handle_castle(pposition, i, j)
                     self.handle_pawn_2move(pposition, i, j)
                     self.handle_enpassant_whitepawn(pposition, i, j)
                     self.handle_enpassant_blackpawn(pposition, i, j)
@@ -82,6 +83,81 @@ class ReverseMoveFinder:
         for v in pt.slidecapturevectors:
             v_c, v_r = self.manipulate_vector(pposition, v)
             self.handle_capture(pposition, i, j, v_r, mpi, ppi)
+
+    def handle_castle(self, pposition: ChessPosition, i, j):
+        if pposition.colourtomove > 0:
+            if j != pposition.boardheight - 1:
+                return
+        else:
+            if j != 0:
+                return
+        kingside = False
+        queenside = False
+        if i == pposition.boardwidth - 2:
+            kingside = True
+        elif i == 2:
+            queenside = True
+        else:
+            return
+
+        mpi = pposition.squares[j][i]
+        pt = self.MyChessGame.piecetypes[abs(mpi) - 1]
+        if pt.name != "King":
+            return
+        
+        i2 = pposition.boardwidth // 2
+        if pposition.squares[j][i2] == 0 or i2 == i:
+            pass
+        else:
+            return
+        
+        if kingside == True:
+            rook_i = i - 1
+            rook_i2 = pposition.boardwidth - 1
+        elif queenside == True:
+            rook_i = i + 1
+            rook_i2 = 0
+
+        rook_pi = pposition.squares[j][rook_i]
+        rook_pt = self.MyChessGame.piecetypes[abs(rook_pi) - 1]
+
+        if pposition.colourtomove > 0 and rook_pi > 0:
+            return
+        if pposition.colourtomove < 0 and rook_pi < 0:
+            return
+        if rook_pt.name != "Rook":
+            return
+        if pposition.squares[j][rook_i2] != 0:
+            return
+
+        self.MyChessGame.SynchronizePosition(pposition, self.cgVerifyer.mainposition)
+        self.cgVerifyer.mainposition.colourtomove = -1 * pposition.colourtomove
+        self.cgVerifyer.mainposition.squares[j][i] = 0
+        self.cgVerifyer.mainposition.squares[j][rook_i] = 0
+        self.cgVerifyer.mainposition.squares[j][i2] = mpi
+        self.cgVerifyer.mainposition.squares[j][rook_i2] = rook_pi
+        if self.cgVerifyer.mainposition.colourtomove > 0:
+            self.cgVerifyer.mainposition.whitekinghasmoved = False
+            if kingside:
+                self.cgVerifyer.mainposition.whitekingsiderookhasmoved = False
+            elif queenside:
+                self.cgVerifyer.mainposition.whitequeensiderookhasmoved = False
+        if self.cgVerifyer.mainposition.colourtomove < 0:
+            self.cgVerifyer.mainposition.blackkinghasmoved = False
+            if kingside:
+                self.cgVerifyer.mainposition.blackkingsiderookhasmoved = False
+            elif queenside:
+                self.cgVerifyer.mainposition.blackqueensiderookhasmoved = False
+        mv = ChessMove(i2, j, i, j)
+        mv.MovingPiece = mpi
+        mv.IsCastling = True
+        mv.othercoordinates = (rook_i2, j, rook_i, j)
+        if self.position_and_move_valid(mv) == True:
+            mypos = ChessPosition()
+            mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
+            self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
+            self.PNList.append((mypos, mv))
+        
 
     def handle_pawn_2move(self, pposition: ChessPosition, i, j):
         mpi = pposition.squares[j][i]

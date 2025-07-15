@@ -6,7 +6,7 @@ def Test_GPPN(mypositionfilename):
     myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
 
     rmf = ReverseMoveFinder(myworkpath, myjsonsourcepath)
-    rmf.MyChessGame.LoadFromJsonFile(".\\games\\unittestgame.json", f"{myworkpath}\\positions\\{mypositionfilename}.json")
+    rmf.MyChessGame.LoadFromJsonFile(f"{myjsonsourcepath}\\games\\unittestgame.json", f"{myworkpath}\\positions\\{mypositionfilename}.json")
     rmf.MyChessGame.SaveAsJsonFile(f"{myworkpath}\\games_verify\\unittestgame.json", f"{myworkpath}\\positions_verify\\{mypositionfilename}.json")
 
     rmf.GPPN(rmf.MyChessGame.mainposition)
