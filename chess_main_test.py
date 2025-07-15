@@ -23,6 +23,7 @@ def Test(pchessgame, pgamefilename, ppositionfilename, n_plies):
     print(datetime.now())
 
 mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
-mychessgame = ChessGame(mylocalpath)
+myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
+mychessgame = ChessGame(mylocalpath, myjsonsourcepath)
 
 Test(mychessgame, "unittestgame", "mate_3_fide_middle", 6)

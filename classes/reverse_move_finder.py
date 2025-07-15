@@ -5,9 +5,9 @@ from classes.chesshelp import chesshelp
 import copy
 
 class ReverseMoveFinder:
-    def __init__(self, pworkpath):
-        self.MyChessGame = ChessGame(pworkpath)
-        self.cgVerifyer = ChessGame(pworkpath)
+    def __init__(self, pworkpath, pjsonsourcepath):
+        self.MyChessGame = ChessGame(pworkpath, pjsonsourcepath)
+        self.cgVerifyer = ChessGame(pworkpath, pjsonsourcepath)
         self.PNList : list [tuple[ChessPosition, ChessMove]] = [] #PreviousNodeList
 
     def GPPN(self, pposition: ChessPosition):

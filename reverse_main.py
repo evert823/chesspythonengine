@@ -3,8 +3,9 @@ from classes.reverse_move_finder import ReverseMoveFinder
 def Test_GPPN(mypositionfilename):
     print(f"mypositionfilename {mypositionfilename}")
     myworkpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
+    myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
 
-    rmf = ReverseMoveFinder(myworkpath)
+    rmf = ReverseMoveFinder(myworkpath, myjsonsourcepath)
     rmf.MyChessGame.LoadFromJsonFile(".\\games\\unittestgame.json", f"{myworkpath}\\positions\\{mypositionfilename}.json")
     rmf.MyChessGame.SaveAsJsonFile(f"{myworkpath}\\games_verify\\unittestgame.json", f"{myworkpath}\\positions_verify\\{mypositionfilename}.json")
 

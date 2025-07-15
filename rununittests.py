@@ -178,8 +178,9 @@ def BaselinePerformance(pchessgame, pgamefilename, ppositionfilename, n_plies, b
 
 
 mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
-myunittestpath = "..\\chesspython\\unittests\\"
-mychessgame = ChessGame(mylocalpath)
+myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
+myunittestpath = f"{myjsonsourcepath}\\unittests\\"
+mychessgame = ChessGame(mylocalpath, myjsonsourcepath)
 
 print(datetime.now())
 TestCastle(mychessgame, "unittestgame", "01A_castle_white_01")
