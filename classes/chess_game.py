@@ -5,11 +5,12 @@ from classes.chess_position import ChessPosition
 from datetime import datetime
 
 class ChessGame:
-    def __init__(self, pworkpath):
+    def __init__(self, pworkpath, pjsonsourcepath):
         self.piecetypes = []
 
         self.mainposition = ChessPosition()
         self.workpath = pworkpath
+        self.jsonsourcepath = pjsonsourcepath
 
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
@@ -43,7 +44,7 @@ class ChessGame:
 
         self.piecetypes.clear()
         for p in gamedict["piecetypes"]:
-            self.LoadPiece(p, self.workpath)
+            self.LoadPiece(p, self.workpath, self.jsonsourcepath)
 
         self.mainposition.LoadFromJsonFile(ppositionfilename, self.piecetypes)
 #---------------------------------------------------------------------------------------------------------
@@ -61,9 +62,9 @@ class ChessGame:
 
         self.mainposition.SaveAsJsonFile(ppositionfilename, self.piecetypes)
 #---------------------------------------------------------------------------------------------------------
-    def LoadPiece(self, ppiecename, pworkpath):
+    def LoadPiece(self, ppiecename, pworkpath, pjsonsourcepath):
         mytype = ChessPieceType()
-        mytype.LoadFromJsonFile("..\\chesspython\\piecedefinitions\\" + ppiecename + ".json")
+        mytype.LoadFromJsonFile(f"{pjsonsourcepath}\\piecedefinitions\\" + ppiecename + ".json")
         mytype.SaveAsJsonFile(f"{pworkpath}\\piecedefinitions_verify\\" + ppiecename + ".json")
         self.piecetypes.append(mytype)
 #---------------------------------------------------------------------------------------------------------
@@ -275,7 +276,7 @@ class ChessGame:
 #---------------------------------------------------------------------------------------------------------
     def SwapBlackWhite(self, pposition):
         #For testing purposes - create same position with reversed colours and mirrored
-        myresultpos = chessposition()
+        myresultpos = ChessPosition()
 
         myresultpos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
 
