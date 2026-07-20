@@ -4,17 +4,16 @@ from classes.chess_move import ChessMove
 from classes.chesshelp import chesshelp
 import copy
 
-class ReverseMoveFinder:
+class UnmoveFinder:
     def __init__(self, pworkpath, pjsonsourcepath):
         self.MyChessGame = ChessGame(pworkpath, pjsonsourcepath)
         self.cgVerifyer = ChessGame(pworkpath, pjsonsourcepath)
-        self.PNList : list [tuple[ChessPosition, ChessMove]] = [] #PreviousNodeList
+        self.PredecessorPositionList : list [tuple[ChessPosition, ChessMove]] = []
 
-    def GPPN(self, pposition: ChessPosition):
+    def GenerateUnmoves(self, pposition: ChessPosition):
         """
-        Or GeneratePossiblePreviousNodes:
-        Generate all potential previous positions that are legal,
-        and that transition to current position by one legal move
+        Generate legal combinations of predecessor positions and their moves
+        that transition to given current position
         """
         self.cgVerifyer.mainposition.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
         self.cgVerifyer.piecetypes = copy.deepcopy(self.MyChessGame.piecetypes)
@@ -31,7 +30,7 @@ class ReverseMoveFinder:
                     self.handle_pawn_2move(pposition, i, j)
                     self.handle_enpassant_whitepawn(pposition, i, j)
                     self.handle_enpassant_blackpawn(pposition, i, j)
-        self.display_PNList()
+        self.display_PredecessorPositionList()
 
     def manipulate_vector(self, pposition: ChessPosition, v):
         #v = input vector coming from piece definition
@@ -156,7 +155,7 @@ class ReverseMoveFinder:
             mypos = ChessPosition()
             mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
             self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
-            self.PNList.append((mypos, mv))
+            self.PredecessorPositionList.append((mypos, mv))
         
 
     def handle_pawn_2move(self, pposition: ChessPosition, i, j):
@@ -226,7 +225,7 @@ class ReverseMoveFinder:
                 mypos = ChessPosition()
                 mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
                 self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
-                self.PNList.append((mypos, mv))
+                self.PredecessorPositionList.append((mypos, mv))
 
     def squares_from_vector(self, pposition: ChessPosition, i, j, v_r):
         squareset = []
@@ -321,7 +320,7 @@ class ReverseMoveFinder:
                 mypos = ChessPosition()
                 mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
                 self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
-                self.PNList.append((mypos, mv))
+                self.PredecessorPositionList.append((mypos, mv))
 
     def handle_capture(self, pposition: ChessPosition, i, j, v_r, mpi, ppi):
         #mpi = moving piece, ppi = promoted piece (0 if there is no promotion)
@@ -350,28 +349,28 @@ class ReverseMoveFinder:
                         mypos = ChessPosition()
                         mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
                         self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
-                        self.PNList.append((mypos, mv))
+                        self.PredecessorPositionList.append((mypos, mv))
 
-    def display_PNList_item(self, pni):
-        myfen = self.PNList[pni][0].PositionAsFEN(self.MyChessGame.piecetypes)
-        s = self.PNList[pni][1].ShortNotation(self.cgVerifyer.piecetypes)
-        if self.PNList[pni][1].IsCapture == True:
+    def display_PredecessorPositionList_item(self, pni):
+        myfen = self.PredecessorPositionList[pni][0].PositionAsFEN(self.MyChessGame.piecetypes)
+        s = self.PredecessorPositionList[pni][1].ShortNotation(self.cgVerifyer.piecetypes)
+        if self.PredecessorPositionList[pni][1].IsCapture == True:
             s += " captured piece "
-            i2 = self.PNList[pni][1].coordinates[2]
-            j2 = self.PNList[pni][1].coordinates[3]
-            if self.PNList[pni][1].IsEnPassant == True:
-                i2 = self.PNList[pni][1].othercoordinates[0]
-                j2 = self.PNList[pni][1].othercoordinates[1]
-            sq = self.PNList[pni][0].squares[j2][i2]
+            i2 = self.PredecessorPositionList[pni][1].coordinates[2]
+            j2 = self.PredecessorPositionList[pni][1].coordinates[3]
+            if self.PredecessorPositionList[pni][1].IsEnPassant == True:
+                i2 = self.PredecessorPositionList[pni][1].othercoordinates[0]
+                j2 = self.PredecessorPositionList[pni][1].othercoordinates[1]
+            sq = self.PredecessorPositionList[pni][0].squares[j2][i2]
             pt = self.MyChessGame.piecetypes[abs(sq) - 1]
             s += pt.name
         s = myfen + " " + s
         return s
 
-    def display_PNList(self):
+    def display_PredecessorPositionList(self):
         biglist = []
-        for pni in range(len(self.PNList)):
-            s = self.display_PNList_item(pni)
+        for pni in range(len(self.PredecessorPositionList)):
+            s = self.display_PredecessorPositionList_item(pni)
             #For now only display non-capture or Queen-capture
             if (s.find("captured piece") < 0 or s.endswith("captured piece Queen")
                 or s.endswith("captured piece Pawn")):
