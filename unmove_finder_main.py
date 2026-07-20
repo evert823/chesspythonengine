@@ -5,9 +5,9 @@ def Test_GenerateUnmoves(mypositionfilename):
     print(f"mypositionfilename {mypositionfilename}")
 
     umf = UnmoveFinder(myworkpath, myjsonsourcepath)
-    umf.MyChessGame.LoadFromJsonFile(os.path.join(myjsonsourcepath, "games", "unittestgame.json"),
+    umf.MyChessGame.LoadFromJsonFile(os.path.join(myjsonsourcepath, "games", "guardendgame.json"),
                                      os.path.join(myworkpath, "positions", f"{mypositionfilename}.json"))
-    umf.MyChessGame.SaveAsJsonFile(os.path.join(myworkpath, "games_verify", "unittestgame.json"),
+    umf.MyChessGame.SaveAsJsonFile(os.path.join(myworkpath, "games_verify", "guardendgame.json"),
                                    os.path.join(myworkpath, "positions_verify", f"{mypositionfilename}.json"))
 
     umf.GenerateUnmoves(umf.MyChessGame.mainposition)
