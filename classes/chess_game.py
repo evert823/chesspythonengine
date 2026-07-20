@@ -3,6 +3,7 @@ from classes.chess_piecetype import ChessPieceType
 from classes.chess_move import ChessMove
 from classes.chess_position import ChessPosition
 from datetime import datetime
+import os
 
 class ChessGame:
     def __init__(self, pworkpath, pjsonsourcepath):
@@ -14,7 +15,7 @@ class ChessGame:
 
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
-        self.logfilename = f"{pworkpath}\\log\\chessgamelog_{dt_string}.log"
+        self.logfilename = os.path.join(pworkpath, "log", f"chessgamelog_{dt_string}.log")
 
         self.presort_when_n_plies_gt = 7
         self.presort_using_n_plies = 3
@@ -64,8 +65,8 @@ class ChessGame:
 #---------------------------------------------------------------------------------------------------------
     def LoadPiece(self, ppiecename, pworkpath, pjsonsourcepath):
         mytype = ChessPieceType()
-        mytype.LoadFromJsonFile(f"{pjsonsourcepath}\\piecedefinitions\\" + ppiecename + ".json")
-        mytype.SaveAsJsonFile(f"{pworkpath}\\piecedefinitions_verify\\" + ppiecename + ".json")
+        mytype.LoadFromJsonFile(os.path.join(pjsonsourcepath, "piecedefinitions", f"{ppiecename}.json"))
+        mytype.SaveAsJsonFile(os.path.join(pworkpath, "piecedefinitions_verify", f"{ppiecename}.json"))
         self.piecetypes.append(mytype)
 #---------------------------------------------------------------------------------------------------------
     def SynchronizePosition(self, frompos, topos):

@@ -1,8 +1,9 @@
 from classes.chess_game import ChessGame
 from datetime import datetime
+import os
 
 def TestCastle(pchessgame, pgamefilename, ppositionfilename):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     
 
     queensidecastling_happened = False
@@ -22,7 +23,7 @@ def TestCastle(pchessgame, pgamefilename, ppositionfilename):
         raise Exception("Kingside castling expected but did not happen")
 
 def TestNoCastle(pchessgame, pgamefilename, ppositionfilename):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     
     castling_happened = False
 
@@ -36,7 +37,7 @@ def TestNoCastle(pchessgame, pgamefilename, ppositionfilename):
         raise Exception("Castling happened but not expected")
 
 def TestPawn(pchessgame, pgamefilename, ppositionfilename, expectedcoord):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     
     _, _, _ = pchessgame.Calculation_n_plies(1)
 
@@ -51,7 +52,7 @@ def TestPawn(pchessgame, pgamefilename, ppositionfilename, expectedcoord):
         raise Exception(f"Expected pawnmove {expectedcoord} did not happen")
 
 def TestPawnPromote(pchessgame, pgamefilename, ppositionfilename, expectedcoord):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     
     _, _, _ = pchessgame.Calculation_n_plies(1)
 
@@ -70,7 +71,7 @@ def TestPawnPromote(pchessgame, pgamefilename, ppositionfilename, expectedcoord)
 
 
 def TestMove(pchessgame, pgamefilename, ppositionfilename, expectedmovingpiecename, expectedcoord, IsExpected):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     
     _, _, _ = pchessgame.Calculation_n_plies(1)
 
@@ -88,7 +89,7 @@ def TestMove(pchessgame, pgamefilename, ppositionfilename, expectedmovingpiecena
 
 
 def TestCheck(pchessgame, pgamefilename, ppositionfilename):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     _, _, _ = pchessgame.Calculation_n_plies(1)
     if pchessgame.mainposition.PMKingIsInCheck() == True:
         pass
@@ -96,7 +97,7 @@ def TestCheck(pchessgame, pgamefilename, ppositionfilename):
         raise Exception(f"Check expected but there was no check.")
 
 def TestStalemate(pchessgame, pgamefilename, ppositionfilename):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     myval, _, _ = pchessgame.Calculation_n_plies(1)
 
     if myval == 0.0:
@@ -105,7 +106,7 @@ def TestStalemate(pchessgame, pgamefilename, ppositionfilename):
         raise Exception(f"Stalemate expected but there was no stalemate.")
 
 def TestMate(pchessgame, pgamefilename, ppositionfilename):
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
     myval, _, _ = pchessgame.Calculation_n_plies(1)
 
     if ((myval == 100.0 and pchessgame.mainposition.colourtomove == -1) or
@@ -121,7 +122,7 @@ def TestMate_n(pchessgame, pgamefilename, ppositionfilename, mate_in_n=2, expect
         mate_in_n = 2
     n_plies = mate_in_n * 2
 
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
 
     startdatetime = datetime.now()
     myval, movei, _ = pchessgame.Calculation_n_plies(n_plies)
@@ -151,7 +152,7 @@ def TestStalemate_n(pchessgame, pgamefilename, ppositionfilename, stalemate_in_n
         n = 2
     n_plies = (stalemate_in_n * 2) + 1
 
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
 
     myval, _, _ = pchessgame.Calculation_n_plies(n_plies)
 
@@ -162,7 +163,7 @@ def TestStalemate_n(pchessgame, pgamefilename, ppositionfilename, stalemate_in_n
 
 def BaselinePerformance(pchessgame, pgamefilename, ppositionfilename, n_plies, baseline_seconds):
 
-    pchessgame.LoadFromJsonFile(".\\games\\" + pgamefilename + ".json", myunittestpath + ppositionfilename + ".json")
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
 
     print(f"Executing performance test for {ppositionfilename} baseline {baseline_seconds}")
 
@@ -177,8 +178,9 @@ def BaselinePerformance(pchessgame, pgamefilename, ppositionfilename, n_plies, b
         raise Exception(f"Performance of calculation under acceptable levels")
 
 
-mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
-myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
+runpath = os.path.join("C:\\", "Users", "Evert Jan", "Documents", "GitHub", "chesspythonengine")
+mylocalpath = os.path.join("C:\\", "Users", "Evert Jan", "pythonprojects", "chesspython_nogithub")
+myjsonsourcepath = os.path.join("C:\\", "Users", "Evert Jan", "Documents", "GitHub", "chesspython")
 myunittestpath = f"{myjsonsourcepath}\\unittests\\"
 mychessgame = ChessGame(mylocalpath, myjsonsourcepath)
 

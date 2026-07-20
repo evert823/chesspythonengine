@@ -1,4 +1,4 @@
-import sys
+import os
 from classes.chess_game import ChessGame
 from datetime import datetime
 
@@ -22,8 +22,8 @@ def Test(pchessgame, pgamefilename, ppositionfilename, n_plies):
     print(f"Result of evaluation {n_plies} plies {ppositionfilename}: {myval} {mymvstr}")
     print(datetime.now())
 
-mylocalpath = "C:\\Users\\Evert Jan\\pythonprojects\\chesspython_nogithub"
-myjsonsourcepath = "C:\\Users\\Evert Jan\\Documents\\GitHub\\chesspython"
+mylocalpath = os.path.join("C:\\", "Users", "Evert Jan", "pythonprojects", "chesspython_nogithub")
+myjsonsourcepath = os.path.join("C:\\", "Users", "Evert Jan", "Documents", "GitHub", "chesspython")
 mychessgame = ChessGame(mylocalpath, myjsonsourcepath)
 
 Test(mychessgame, "unittestgame", "mate_3_fide_middle", 6)
