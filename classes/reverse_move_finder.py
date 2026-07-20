@@ -353,6 +353,7 @@ class ReverseMoveFinder:
                         self.PNList.append((mypos, mv))
 
     def display_PNList_item(self, pni):
+        myfen = self.PNList[pni][0].PositionAsFEN(self.MyChessGame.piecetypes)
         s = self.PNList[pni][1].ShortNotation(self.cgVerifyer.piecetypes)
         if self.PNList[pni][1].IsCapture == True:
             s += " captured piece "
@@ -364,6 +365,7 @@ class ReverseMoveFinder:
             sq = self.PNList[pni][0].squares[j2][i2]
             pt = self.MyChessGame.piecetypes[abs(sq) - 1]
             s += pt.name
+        s = myfen + " " + s
         return s
 
     def display_PNList(self):

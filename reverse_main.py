@@ -11,6 +11,7 @@ def Test_GPPN(mypositionfilename):
 
     rmf.GPPN(rmf.MyChessGame.mainposition)
 
-Test_GPPN("test_reverse_move_finder_white")
-Test_GPPN("test_reverse_move_finder_black")
-Test_GPPN("test_reverse_move_finder")
+Test_GPPN("fide_fun")
+#Test_GPPN("test_reverse_move_finder_white")
+#Test_GPPN("test_reverse_move_finder_black")
+#Test_GPPN("test_reverse_move_finder")
