@@ -15,6 +15,8 @@ class UnmoveFinder:
         Generate legal combinations of predecessor positions and their moves
         that transition to given current position
         """
+        piece_counts_dict = self.count_pieces(pposition)
+        print(piece_counts_dict)
         self.cgVerifyer.mainposition.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
         self.cgVerifyer.piecetypes = copy.deepcopy(self.MyChessGame.piecetypes)
         self.white_pawn_mpi = chesshelp.Str2PieceType("p", self.cgVerifyer.piecetypes)
@@ -31,6 +33,20 @@ class UnmoveFinder:
                     self.handle_enpassant_whitepawn(pposition, i, j)
                     self.handle_enpassant_blackpawn(pposition, i, j)
         self.display_PredecessorPositionList()
+
+    def count_pieces(self, pposition: ChessPosition):
+        #Count the pieces of the army of colourtomove
+        piece_counts_dict = {"piece_counts" : []}
+        for pt in self.MyChessGame.piecetypes:
+            piece_counts_dict[pt.symbol] = 0
+        for i in range(pposition.boardwidth):
+            for j in range(pposition.boardheight):
+                if ((pposition.squares[j][i] < 0 and pposition.colourtomove < 0) or
+                    (pposition.squares[j][i] > 0 and pposition.colourtomove > 0)):
+                    sq = pposition.squares[j][i]
+                    pt = self.MyChessGame.piecetypes[abs(sq) - 1]
+                    piece_counts_dict[pt.symbol] += 1
+        return piece_counts_dict
 
     def manipulate_vector(self, pposition: ChessPosition, v):
         #v = input vector coming from piece definition
