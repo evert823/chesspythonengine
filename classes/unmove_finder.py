@@ -15,8 +15,7 @@ class UnmoveFinder:
         Generate legal combinations of predecessor positions and their moves
         that transition to given current position
         """
-        piece_counts_dict = self.count_pieces(pposition)
-        print(piece_counts_dict)
+        self.piece_counts_dict = self.count_pieces(pposition)
         self.cgVerifyer.mainposition.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
         self.cgVerifyer.piecetypes = copy.deepcopy(self.MyChessGame.piecetypes)
         self.white_pawn_mpi = chesshelp.Str2PieceType("p", self.cgVerifyer.piecetypes)
@@ -351,7 +350,7 @@ class UnmoveFinder:
             #cpi = captured piece index
             #sq = the captured piece as encoded in squares
             for cpi in range(len(self.cgVerifyer.piecetypes)):
-                if self.cgVerifyer.piecetypes[cpi].name != "King":
+                if self.piecetype_can_be_uncaptured(pposition, self.cgVerifyer.piecetypes[cpi]):
                     if pposition.colourtomove > 0:
                         sq = cpi + 1
                     else:
@@ -366,6 +365,23 @@ class UnmoveFinder:
                         mypos.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
                         self.MyChessGame.SynchronizePosition(self.cgVerifyer.mainposition, mypos)
                         self.PredecessorPositionList.append((mypos, mv))
+
+    def piecetype_can_be_uncaptured(self, pposition: ChessPosition, pt):
+        '''
+        We cannot uncapture a King
+        We cannot uncapture a piece, if the number of similar pieces in the position is at its maximum
+        '''
+        #TODO This is still rather simplistic
+        if pt.name == "King":
+            return False
+        a = self.piece_counts_dict[pt.symbol]
+        if pt.name == "Pawn":
+            if a >= pposition.boardwidth:
+                return False
+            return True
+        if a >= 2:
+            return False
+        return True
 
     def display_PredecessorPositionList_item(self, pni):
         myfen = self.PredecessorPositionList[pni][0].PositionAsFEN(self.MyChessGame.piecetypes)
