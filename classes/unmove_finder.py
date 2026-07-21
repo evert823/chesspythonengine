@@ -400,12 +400,6 @@ class UnmoveFinder:
         return s
 
     def display_PredecessorPositionList(self):
-        biglist = []
         for pni in range(len(self.PredecessorPositionList)):
             s = self.display_PredecessorPositionList_item(pni)
-            #For now only display non-capture or Queen-capture
-            if (s.find("captured piece") < 0 or s.endswith("captured piece Queen")
-                or s.endswith("captured piece Pawn")):
-                print(s)
-            biglist.append(s)
-        #print(biglist)
+            print(s)
