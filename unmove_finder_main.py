@@ -10,7 +10,9 @@ def Test_GenerateUnmoves(mypositionfilename):
     umf.MyChessGame.SaveAsJsonFile(os.path.join(myworkpath, "games_verify", "guardendgame.json"),
                                    os.path.join(myworkpath, "positions_verify", f"{mypositionfilename}.json"))
 
-    umf.GenerateUnmoves(umf.MyChessGame.mainposition)
+    umf.GenerateUnmoves(pposition=umf.MyChessGame.mainposition,
+                        pfilepath=os.path.join(myworkpath, "predecessorpositions", "fen.txt"),
+                        verbose=False)
 
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")

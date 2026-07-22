@@ -10,7 +10,7 @@ class UnmoveFinder:
         self.cgVerifyer = ChessGame(pworkpath, pjsonsourcepath)
         self.PredecessorPositionList : list [tuple[ChessPosition, ChessMove]] = []
 
-    def GenerateUnmoves(self, pposition: ChessPosition):
+    def GenerateUnmoves(self, pposition: ChessPosition, pfilepath: str, verbose=False):
         """
         Generate legal combinations of predecessor positions and their moves
         that transition to given current position
@@ -31,7 +31,9 @@ class UnmoveFinder:
                     self.handle_pawn_2move(pposition, i, j)
                     self.handle_enpassant_whitepawn(pposition, i, j)
                     self.handle_enpassant_blackpawn(pposition, i, j)
-        self.display_PredecessorPositionList()
+        if verbose == True:
+            self.display_PredecessorPositionList()
+        self.write_PredecessorPositionFile(pfilepath)
 
     def count_pieces(self, pposition: ChessPosition):
         #Count the pieces of the army of colourtomove
@@ -403,3 +405,10 @@ class UnmoveFinder:
         for pni in range(len(self.PredecessorPositionList)):
             s = self.display_PredecessorPositionList_item(pni)
             print(s)
+
+    def write_PredecessorPositionFile(self, pfilepath: str):
+        file2 = open(pfilepath, 'w')
+        for pni in range(len(self.PredecessorPositionList)):
+            myfen = self.PredecessorPositionList[pni][0].PositionAsFEN(self.MyChessGame.piecetypes)
+            file2.write(f"{myfen}\n")
+        file2.close()

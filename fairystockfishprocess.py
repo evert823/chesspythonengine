@@ -52,6 +52,13 @@ def run_position(engine, fen: str, depth: int):
         if line.startswith("bestmove"):
             print(fen, "->", line)
             break
+def run_positions_from_file(engine, pfilepath: str, depth: int):
+    file1 = open(pfilepath, 'r', encoding='utf-8')
+    Lines = file1.readlines()
+    file1.close()
+    for line in Lines:
+        myfen = line.replace("\n", "").strip()
+        run_position(engine=engine, fen=myfen, depth=depth)
 
 engine = create_process()
 init_uci(engine=engine)
@@ -70,6 +77,11 @@ run_position(engine=engine, fen="10/1k2G5/10/2K7/3N6/10/10/10 w", depth=40)
 
 #objective mate 6 stabilizes depth 16
 run_position(engine=engine, fen="10/2k2G4/10/2K7/3N6/10/10/10 w", depth=40)
+
+#the output of unmove_finder_main.py
+run_positions_from_file(engine=engine,
+                        pfilepath="/home/administrator/pythonwork/predecessorpositions/fen.txt",
+                        depth=5)
 
 send(engine=engine, cmd="quit")
 engine.wait()
