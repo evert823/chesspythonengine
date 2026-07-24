@@ -15,6 +15,7 @@ class UnmoveFinder:
         Generate legal combinations of predecessor positions and their moves
         that transition to given current position
         """
+        self.PredecessorPositionList.clear()
         self.piece_counts_dict = self.count_pieces(pposition)
         self.cgVerifyer.mainposition.ResetBoardsize(pposition.boardwidth, pposition.boardheight)
         self.cgVerifyer.piecetypes = copy.deepcopy(self.MyChessGame.piecetypes)

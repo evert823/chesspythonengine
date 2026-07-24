@@ -13,11 +13,13 @@ from classes.unmove_finder import UnmoveFinder
 import os
 from classes.fairy_stockfish_process_handler import FairyStockfishProcessHandler
 import random
+from datetime import datetime
 
-def log(s: str):
+def log(message: str):
     logfilepath = os.path.join(myworkpath, "log", "generate.log")
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     file2 = open(logfilepath, 'a')
-    file2.write(s + "\n")
+    file2.write(f"{current_datetime} - {message}\n")
     file2.close()
 
 def create_empty_file(targetfilepath):
@@ -58,8 +60,10 @@ def generate_predecessors_from_fen_file(i: int):
     file1.close()
     create_empty_file(targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"))
     
-    for line in Lines:
-        myfen = line.replace("\n", "").strip()
+    for lnr in range(len(Lines)):
+        myfen = Lines[lnr].replace("\n", "").strip()
+        if lnr % 20 == 0:
+            log(f"{lnr} fen {myfen} generating the unmoves")
         umf.MyChessGame.mainposition.PositionFromFEN(myfen, umf.MyChessGame.piecetypes)
         umf.GenerateUnmoves(pposition=umf.MyChessGame.mainposition,
                             pfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_part.txt"),
@@ -81,9 +85,11 @@ def validate_predecessors(i: int):
     Lines = file1.readlines()
     file1.close()
     file2 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_val.txt"), 'w', encoding='utf-8')
-    for line in Lines:
-        myfen = line.replace("\n", "").strip()
+    for lnr in range(len(Lines)):
+        myfen = Lines[lnr].replace("\n", "").strip()
         mate_score = fsph.run_position(fen=myfen, depth=20)
+        if lnr % 20 == 0:
+            log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {expected_mate_score(i)}")
         if verbose == True:
             print(f"fen {myfen} mate_score {mate_score}")
         if mate_score == expected_mate_score(i):
@@ -105,7 +111,7 @@ fsph = FairyStockfishProcessHandler()
 umf = UnmoveFinder(myworkpath, myjsonsourcepath)
 write_file_0()
 
-for i in range(5):
+for i in range(4):
     log(f"generate puzzles iteration {i} started")
     generate_predecessors_from_fen_file(i=i)
     log(f"deduplication {i} started")
