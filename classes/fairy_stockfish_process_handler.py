@@ -1,5 +1,6 @@
 import subprocess
 import re
+import time
 
 ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
 INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/guardendgame.ini"
@@ -67,6 +68,7 @@ class FairyStockfishProcessHandler:
     def close_engine(self):
         self.send(cmd="quit")
         self.engine.wait()
+        time.sleep(5)
 
     def run_position(self, fen: str, depth: int):
         mate_score = None

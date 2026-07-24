@@ -14,6 +14,12 @@ import os
 from classes.fairy_stockfish_process_handler import FairyStockfishProcessHandler
 import random
 
+def log(s: str):
+    logfilepath = os.path.join(myworkpath, "log", "generate.log")
+    file2 = open(logfilepath, 'a')
+    file2.write(s + "\n")
+    file2.close()
+
 def create_empty_file(targetfilepath):
     tgtfile = open(targetfilepath, 'w', encoding='utf-8')
     tgtfile.close()
@@ -70,6 +76,7 @@ def expected_mate_score(i):
 
 
 def validate_predecessors(i: int):
+    fsph.initial_setup()
     file1 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup.txt"), 'r', encoding='utf-8')
     Lines = file1.readlines()
     file1.close()
@@ -82,6 +89,7 @@ def validate_predecessors(i: int):
         if mate_score == expected_mate_score(i):
             file2.write(myfen + "\n")
     file2.close()
+    fsph.close_engine()
 
 ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
 INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/guardendgame.ini"
@@ -93,20 +101,16 @@ gamefilepath = os.path.join(myjsonsourcepath, "games", "guardendgame.json")
 initialpositionfilepath = os.path.join(myworkpath, "positions", "crazymate.json")
 
 fsph = FairyStockfishProcessHandler()
-fsph.initial_setup()
 
 umf = UnmoveFinder(myworkpath, myjsonsourcepath)
 write_file_0()
 
 for i in range(5):
-    print(f"generate puzzles iteration {i} started")
+    log(f"generate puzzles iteration {i} started")
     generate_predecessors_from_fen_file(i=i)
+    log(f"deduplication {i} started")
     deduplicate_file(fromfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"),
                     targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup.txt"))
-    print(f"generate puzzles iteration {i} now running Fairy-Stockfish process")
+    log(f"generate puzzles iteration {i} now starting Fairy-Stockfish process")
     validate_predecessors(i=i)
-    print(f"generate puzzles iteration {i} ended")
-
-
-
-fsph.close_engine()
+    log(f"generate puzzles iteration {i} ended")
