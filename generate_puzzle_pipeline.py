@@ -111,7 +111,7 @@ fsph = FairyStockfishProcessHandler()
 umf = UnmoveFinder(myworkpath, myjsonsourcepath)
 write_file_0()
 
-for i in range(4):
+for i in range(5):
     log(f"generate puzzles iteration {i} started")
     generate_predecessors_from_fen_file(i=i)
     log(f"deduplication {i} started")
