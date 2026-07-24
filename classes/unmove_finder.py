@@ -381,7 +381,7 @@ class UnmoveFinder:
             if a >= pposition.boardwidth:
                 return False
             return True
-        if a >= 2:
+        if a >= 1:
             return False
         return True
 

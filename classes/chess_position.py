@@ -138,8 +138,9 @@ class ChessPosition:
         fenparts0 = pfen.split(" ")
         fenparts = fenparts0[0].split("/")
         
-        self.boardwidth = 8
-        self.boardheight = 8
+        if self.boardwidth == -1:
+            self.boardwidth = 8
+            self.boardheight = 8
 
         if fenparts0[1].lower() == "w":
             self.colourtomove = 1
