@@ -26,12 +26,11 @@ def create_empty_file(targetfilepath):
     tgtfile = open(targetfilepath, 'w', encoding='utf-8')
     tgtfile.close()
 
-def append_file(fromfilepath, targetfilepath, p=1.0):
+def append_file(fromfilepath, targetfilepath):
     srcfile = open(fromfilepath, 'r', encoding='utf-8')
     tgtfile = open(targetfilepath, 'a', encoding='utf-8')
     for line in srcfile:
-        if random.random() < p:
-            tgtfile.write(line)
+        tgtfile.write(line)
     srcfile.close()
     tgtfile.close()
 
@@ -46,6 +45,33 @@ def deduplicate_file(fromfilepath, targetfilepath):
             tgtfile.write(line)
     srcfile.close()
     tgtfile.close()
+
+def random_shrink_file(fromfilepath, targetfilepath):
+    '''
+    if srcfile has <= max_appr_result_iteration rows, write all rows
+    if srcfile has > max_appr_result_iteration rows, then
+    write random subset of approximately max_appr_result_iteration
+    '''
+    srcfile = open(fromfilepath, 'r', encoding='utf-8')
+    tgtfile = open(targetfilepath, 'w', encoding='utf-8')
+    Lines = srcfile.readlines()
+    line_count = len(Lines)
+    lines_written = 0
+    if line_count == 0:
+        p = 1.0
+    elif line_count <= max_appr_result_iteration:
+        p = 1.0
+    else:
+        p = max_appr_result_iteration / line_count
+    for lnr in range(line_count):
+        line = Lines[lnr]
+        ev = random.random()
+        if ev <= p:
+            lines_written += 1
+            tgtfile.write(line)
+    srcfile.close()
+    tgtfile.close()
+    log(f"random_shrink {fromfilepath} {line_count} {targetfilepath} {lines_written}")
 
 def write_file_0():
     umf.MyChessGame.LoadFromJsonFile(gamefilepath, initialpositionfilepath)
@@ -69,8 +95,7 @@ def generate_predecessors_from_fen_file(i: int):
                             pfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_part.txt"),
                             verbose=verbose)
         append_file(fromfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_part.txt"),
-                    targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"),
-                    p=1.0)
+                    targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"))
 
 def expected_mate_score(i):
     if i % 2 == 0:
@@ -81,7 +106,7 @@ def expected_mate_score(i):
 
 def validate_predecessors(i: int):
     fsph.initial_setup()
-    file1 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup.txt"), 'r', encoding='utf-8')
+    file1 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_sized.txt"), 'r', encoding='utf-8')
     Lines = file1.readlines()
     file1.close()
     file2 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_val.txt"), 'w', encoding='utf-8')
@@ -100,6 +125,7 @@ def validate_predecessors(i: int):
 ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
 INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/guardendgame.ini"
 verbose = False
+max_appr_result_iteration = 500
 
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")
@@ -117,6 +143,8 @@ for i in range(5):
     log(f"deduplication {i} started")
     deduplicate_file(fromfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"),
                     targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup.txt"))
+    random_shrink_file(fromfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup.txt"),
+                    targetfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_sized.txt"))
     log(f"generate puzzles iteration {i} now starting Fairy-Stockfish process")
     validate_predecessors(i=i)
     log(f"generate puzzles iteration {i} ended")
