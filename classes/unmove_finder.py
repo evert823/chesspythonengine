@@ -374,6 +374,7 @@ class UnmoveFinder:
         We cannot uncapture a King
         We cannot uncapture a piece, if the number of similar pieces in the position is at its maximum
         '''
+        return False #I temporarily don't want captures
         #TODO This is still rather simplistic
         if pt.name == "King":
             return False

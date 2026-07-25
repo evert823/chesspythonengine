@@ -122,15 +122,13 @@ def validate_predecessors(i: int):
     file2.close()
     fsph.close_engine()
 
-ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
-INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/guardendgame.ini"
 verbose = False
 max_appr_result_iteration = 500
 
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")
-gamefilepath = os.path.join(myjsonsourcepath, "games", "guardendgame.json")
-initialpositionfilepath = os.path.join(myworkpath, "positions", "crazymate.json")
+gamefilepath = os.path.join(myjsonsourcepath, "games", "fairystockfishtestset.json")
+initialpositionfilepath = os.path.join(myworkpath, "positions", "chancellormate.json")
 
 fsph = FairyStockfishProcessHandler()
 

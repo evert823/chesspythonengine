@@ -3,7 +3,8 @@ import re
 import time
 
 ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
-INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/guardendgame.ini"
+INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/fairystockfishtestset.ini"
+VARIANT_NAME = "FairyStockfishTestset"
 
 class FairyStockfishProcessHandler:
     def __init__(self):
@@ -41,10 +42,11 @@ class FairyStockfishProcessHandler:
                 break
 
     def load_variant(self):
+        print(f"Loading variant.ini {INI_PATH}")
         self.send(cmd=f"load {INI_PATH}")
 
     def setvariant_uci(self):
-        self.send(cmd="setoption name UCI_Variant value Guardendgame")
+        self.send(cmd=f"setoption name UCI_Variant value {VARIANT_NAME}")
 
     def detect_fsf_mate_score(self, line):
         '''
