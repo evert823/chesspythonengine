@@ -258,6 +258,11 @@ TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5
 TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 4, 8), True);
 TestMove(mychessgame, "unittestgame", "16A_limited_range_black", "Queen3", (4, 5, 2, 5), False);
 
+TestMove(mychessgame, "unittestgame", "18A_testwall_white", "Knight", (2, 2, 4, 3), False);
+TestMove(mychessgame, "unittestgame", "18A_testwall_white", "Knight", (2, 2, 0, 1), True);
+TestMove(mychessgame, "unittestgame", "18A_testwall_black", "Knight", (2, 5, 4, 4), False);
+TestMove(mychessgame, "unittestgame", "18A_testwall_black", "Knight", (2, 5, 0, 6), True);
+
 print("ALL UNITTESTS PASSED")
 
 print(datetime.now())

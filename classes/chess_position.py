@@ -390,11 +390,13 @@ class ChessPosition:
 
                 if ((self.squares[j2][i2] > 0 and self.squares[j][i] < 0) or
                     (self.squares[j2][i2] < 0 and self.squares[j][i] > 0)):
-                    movei = self.movelist_totalfound
-                    self.InitializeMove(movei, i, j, i2, j2)
-                    self.movelist[movei].MovingPiece = self.squares[j][i]
-                    self.movelist[movei].IsCapture = True
-                    self.GetPromotion(movei, ppiecetypes)
+                    IsWall = self.IsWall(i=i2, j=j2, ppiecetypes=ppiecetypes)
+                    if IsWall == False:
+                        movei = self.movelist_totalfound
+                        self.InitializeMove(movei, i, j, i2, j2)
+                        self.movelist[movei].MovingPiece = self.squares[j][i]
+                        self.movelist[movei].IsCapture = True
+                        self.GetPromotion(movei, ppiecetypes)
                     blocked = True
                 elif self.squares[j2][i2] != 0:
                     blocked = True
@@ -406,6 +408,12 @@ class ChessPosition:
                 else:
                     j2 = j2 - v[1]
                 maxrangecounter += 1
+#---------------------------------------------------------------------------------------------------------
+    def IsWall(self, i, j, ppiecetypes):
+        pt = ppiecetypes[abs(self.squares[j][i]) - 1]
+        if pt.name == "Wall":
+            return True
+        return False
 #---------------------------------------------------------------------------------------------------------
     def GetPromotion(self, movei, ppiecetypes):
         includepromote = False
