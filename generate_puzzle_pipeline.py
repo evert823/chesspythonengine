@@ -112,7 +112,7 @@ def validate_predecessors(i: int):
     file2 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_val.txt"), 'w', encoding='utf-8')
     for lnr in range(len(Lines)):
         myfen = Lines[lnr].replace("\n", "").strip()
-        mate_score = fsph.run_position(fen=myfen, depth=20)
+        mate_score = fsph.run_position(fen=myfen, depth=30)
         if lnr % 20 == 0:
             log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {expected_mate_score(i)}")
         if verbose == True:
@@ -128,7 +128,7 @@ max_appr_result_iteration = 500
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")
 gamefilepath = os.path.join(myjsonsourcepath, "games", "fairystockfishtestset.json")
-initialpositionfilepath = os.path.join(myworkpath, "positions", "chancellormate.json")
+initialpositionfilepath = os.path.join(myworkpath, "positions", "puzzlechallenge.json")
 
 fsph = FairyStockfishProcessHandler()
 
@@ -136,7 +136,7 @@ umf = UnmoveFinder(myworkpath, myjsonsourcepath)
 umf.UncapturePossible = False #Default True
 write_file_0()
 
-for i in range(5):
+for i in range(7):
     log(f"generate puzzles iteration {i} started")
     generate_predecessors_from_fen_file(i=i)
     log(f"deduplication {i} started")

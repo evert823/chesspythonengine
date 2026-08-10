@@ -78,7 +78,11 @@ class FairyStockfishProcessHandler:
         self.send(cmd="setoption name Clear Hash")
         #Because if we don't then FSF becomes inpredictable
 
-        self.send(cmd=f"position fen {fen}")
+        #The wall is hardcoded asterisk for Fairy-Stockfish while we use letter x or X
+        fen2 = fen.replace("x", "*")
+        fen2 = fen2.replace("X", "*")
+
+        self.send(cmd=f"position fen {fen2}")
         self.send(cmd=f"go depth {str(depth)}")
         while True:
             line = self.engine.stdout.readline().strip()
