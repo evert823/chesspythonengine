@@ -5,6 +5,7 @@ def Test_GenerateUnmoves(mypositionfilename):
     print(f"mypositionfilename {mypositionfilename}")
 
     umf = UnmoveFinder(myworkpath, myjsonsourcepath)
+    umf.UncapturePossible = True #Default True
     umf.MyChessGame.LoadFromJsonFile(os.path.join(myjsonsourcepath, "games", "guardendgame.json"),
                                      os.path.join(myworkpath, "positions", f"{mypositionfilename}.json"))
     umf.MyChessGame.SaveAsJsonFile(os.path.join(myworkpath, "games_verify", "guardendgame.json"),

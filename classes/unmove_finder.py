@@ -9,6 +9,7 @@ class UnmoveFinder:
         self.MyChessGame = ChessGame(pworkpath, pjsonsourcepath)
         self.cgVerifyer = ChessGame(pworkpath, pjsonsourcepath)
         self.PredecessorPositionList : list [tuple[ChessPosition, ChessMove]] = []
+        self.UncapturePossible = True
 
     def GenerateUnmoves(self, pposition: ChessPosition, pfilepath: str, verbose=False):
         """
@@ -372,11 +373,15 @@ class UnmoveFinder:
     def piecetype_can_be_uncaptured(self, pposition: ChessPosition, pt):
         '''
         We cannot uncapture a King
+        We cannot uncapture a Wall
         We cannot uncapture a piece, if the number of similar pieces in the position is at its maximum
         '''
-        return False #I temporarily don't want captures
         #TODO This is still rather simplistic
+        if self.UncapturePossible == False:
+            return False
         if pt.name == "King":
+            return False
+        if pt.name == "Wall":
             return False
         a = self.piece_counts_dict[pt.symbol]
         if pt.name == "Pawn":

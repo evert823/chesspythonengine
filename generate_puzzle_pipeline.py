@@ -133,6 +133,7 @@ initialpositionfilepath = os.path.join(myworkpath, "positions", "chancellormate.
 fsph = FairyStockfishProcessHandler()
 
 umf = UnmoveFinder(myworkpath, myjsonsourcepath)
+umf.UncapturePossible = False #Default True
 write_file_0()
 
 for i in range(5):
