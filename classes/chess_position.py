@@ -440,7 +440,7 @@ class ChessPosition:
 
         if includepromote == True:
             for pi in range(len(ppiecetypes)):
-                if (ppiecetypes[pi].name not in ["Amazon", "King", pt1.name]):
+                if (ppiecetypes[pi].name not in ["Amazon", "King", "Wall", pt1.name]):
                     movei2 = self.movelist_totalfound
                     self.SynchronizeChessmove(self.movelist[movei], self.movelist[movei2])
                     if self.movelist[movei].MovingPiece < 0:

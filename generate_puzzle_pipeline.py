@@ -103,8 +103,12 @@ def expected_mate_score(i):
     m = (i // 2) + 1
     return m * -1
 
+def depth_from_iteration(i):
+    return ( (7 * (i + 1)) // 2 ) + 10
 
 def validate_predecessors(i: int):
+    mydepth = depth_from_iteration(i)
+    log(f"Fairy-Stockfish depth {mydepth}")
     fsph.initial_setup()
     file1 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_sized.txt"), 'r', encoding='utf-8')
     Lines = file1.readlines()
@@ -112,7 +116,7 @@ def validate_predecessors(i: int):
     file2 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_val.txt"), 'w', encoding='utf-8')
     for lnr in range(len(Lines)):
         myfen = Lines[lnr].replace("\n", "").strip()
-        mate_score = fsph.run_position(fen=myfen, depth=30)
+        mate_score = fsph.run_position(fen=myfen, depth=mydepth)
         if lnr % 20 == 0:
             log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {expected_mate_score(i)}")
         if verbose == True:
@@ -121,6 +125,17 @@ def validate_predecessors(i: int):
             file2.write(myfen + "\n")
     file2.close()
     fsph.close_engine()
+
+def PiecelistForUncapture_from_iteration(i):
+    if i == 0:
+        return ["Knight", "Bishop"]
+    if i == 1:
+        return ["Knight", "Bishop"]
+    if i == 2:
+        return ["Centaur", "Guard"]
+    if i == 3:
+        return ["Centaur", "Guard"]
+    return []
 
 verbose = False
 max_appr_result_iteration = 500
@@ -133,11 +148,11 @@ initialpositionfilepath = os.path.join(myworkpath, "positions", "puzzlechallenge
 fsph = FairyStockfishProcessHandler()
 
 umf = UnmoveFinder(myworkpath, myjsonsourcepath)
-umf.UncapturePossible = False #Default True
 write_file_0()
 
 for i in range(7):
     log(f"generate puzzles iteration {i} started")
+    umf.PiecelistForUncapture = PiecelistForUncapture_from_iteration(i)
     generate_predecessors_from_fen_file(i=i)
     log(f"deduplication {i} started")
     deduplicate_file(fromfilepath=os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}.txt"),

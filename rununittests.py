@@ -69,6 +69,26 @@ def TestPawnPromote(pchessgame, pgamefilename, ppositionfilename, expectedcoord)
     if mymovehappened == False:
         raise Exception(f"Expected pawnmove {expectedcoord} did not happen")
 
+def TestPawnNoWrongPromote(pchessgame, pgamefilename, ppositionfilename, expectedcoord):
+    pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
+    
+    _, _, _ = pchessgame.Calculation_n_plies(1)
+
+    mymovehappened = False
+    foundwrongpiece = ""
+    for movei in range(pchessgame.mainposition.movelist_totalfound):
+        pt = pchessgame.piecetypes[abs(pchessgame.mainposition.movelist[movei].MovingPiece) - 1]
+        if pt.name == "Pawn":
+            if pchessgame.mainposition.movelist[movei].coordinates == expectedcoord:
+                if pchessgame.mainposition.movelist[movei].PromoteToPiece != 0:
+                    ptp = pchessgame.piecetypes[abs(pchessgame.mainposition.movelist[movei].PromoteToPiece) - 1]
+                    if ptp.name in ["Pawn", "King", "Amazon", "Wall"]:
+                        mymovehappened = True
+                        foundwrongpiece = ptp.name
+
+    if mymovehappened == True:
+        raise Exception(f"Promotion to wrong piece {expectedcoord} {foundwrongpiece} happened")
+
 
 def TestMove(pchessgame, pgamefilename, ppositionfilename, expectedmovingpiecename, expectedcoord, IsExpected):
     pchessgame.LoadFromJsonFile(os.path.join(runpath, "games", f"{pgamefilename}.json"), myunittestpath + ppositionfilename + ".json")
@@ -213,10 +233,17 @@ TestPawn(mychessgame, "unittestgame", "02C_pawn_black", (2, 3, 3, 2))
 TestPawn(mychessgame, "unittestgame", "02C_pawn_black", (2, 3, 1, 2))
 TestPawn(mychessgame, "unittestgame", "02D_pawn_white", (1, 4, 2, 5))
 TestPawn(mychessgame, "unittestgame", "02D_pawn_black", (2, 3, 1, 2))
+
 TestPawnPromote(mychessgame, "unittestgame", "02E_pawn_white", (1, 6, 1, 7))
 TestPawnPromote(mychessgame, "unittestgame", "02E_pawn_white", (1, 6, 0, 7))
 TestPawnPromote(mychessgame, "unittestgame", "02E_pawn_black", (6, 1, 6, 0))
 TestPawnPromote(mychessgame, "unittestgame", "02E_pawn_black", (6, 1, 7, 0))
+
+TestPawnNoWrongPromote(mychessgame, "unittestgame", "02E_pawn_white", (1, 6, 1, 7))
+TestPawnNoWrongPromote(mychessgame, "unittestgame", "02E_pawn_white", (1, 6, 0, 7))
+TestPawnNoWrongPromote(mychessgame, "unittestgame", "02E_pawn_black", (6, 1, 6, 0))
+TestPawnNoWrongPromote(mychessgame, "unittestgame", "02E_pawn_black", (6, 1, 7, 0))
+
 TestMove(mychessgame, "unittestgame", "03A_divergent_white", "Hunter", (4, 5, 4, 6), True)
 TestMove(mychessgame, "unittestgame", "03A_divergent_white", "Hunter", (4, 5, 2, 6), True)
 TestMove(mychessgame, "unittestgame", "03A_divergent_black", "Hunter", (2, 3, 2, 2), True)
