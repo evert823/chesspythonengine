@@ -114,27 +114,30 @@ def validate_predecessors(i: int):
     Lines = file1.readlines()
     file1.close()
     file2 = open(os.path.join(myworkpath, "predecessorpositions", f"fen_u_{i+1}_dedup_val.txt"), 'w', encoding='utf-8')
+    my_expected_mate_score = expected_mate_score(i)
     for lnr in range(len(Lines)):
         myfen = Lines[lnr].replace("\n", "").strip()
         mate_score = fsph.run_position(fen=myfen, depth=mydepth)
         if lnr % 20 == 0:
-            log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {expected_mate_score(i)}")
+            log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score}")
+        if my_expected_mate_score > 0 and mate_score > 3:
+            log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score} byproduct")
         if verbose == True:
             print(f"fen {myfen} mate_score {mate_score}")
-        if mate_score == expected_mate_score(i):
+        if mate_score == my_expected_mate_score:
             file2.write(myfen + "\n")
     file2.close()
     fsph.close_engine()
 
 def PiecelistForUncapture_from_iteration(i):
     if i == 0:
-        return ["Knight", "Bishop"]
+        return ["Rook", "Guard"]
     if i == 1:
-        return ["Knight", "Bishop"]
+        return ["Rook", "Guard"]
     if i == 2:
-        return ["Centaur", "Guard"]
+        return ["Rook", "Guard"]
     if i == 3:
-        return ["Centaur", "Guard"]
+        return ["Rook", "Guard"]
     return []
 
 verbose = False
