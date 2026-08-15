@@ -285,25 +285,16 @@ class UnmoveFinder:
             return False
         return True
 
-    def pawns_on_ranks_valid(self, pposition: ChessPosition) -> bool:
-        for i in range(pposition.boardwidth):
-            for j in [0, pposition.boardheight - 1]:
-                if pposition.squares[j][i] == self.white_pawn_mpi:
-                    return False
-                if pposition.squares[j][i] == self.black_pawn_mpi:
-                    return False
-                if pposition.squares[j][i] == self.white_pawn_mpi:
-                    return False
-                if pposition.squares[j][i] == self.black_pawn_mpi:
-                    return False
-        return True
-
     def position_and_move_valid(self, mv: ChessMove) -> bool:
         #PREREQUISITE we have loaded our position into self.cgVerifyer.mainposition
 
         #TODO check if execute mv from self.cgVerifyer.mainposition --> self.MyChessGame.mainposition
 
-        if self.pawns_on_ranks_valid(self.cgVerifyer.mainposition) == False:
+        pawns_valid = self.cgVerifyer.mainposition.pawns_on_ranks_valid(ppiecetypes=self.MyChessGame.piecetypes)
+        if pawns_valid == False:
+            return False
+        max_one_king = self.cgVerifyer.mainposition.max_one_king_per_side(ppiecetypes=self.MyChessGame.piecetypes)
+        if max_one_king == False:
             return False
 
         myval, mymvidx, _ = self.cgVerifyer.Calculation_n_plies(1)

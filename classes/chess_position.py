@@ -688,3 +688,31 @@ class ChessPosition:
             return myresult
         return materialbalance * 10
 #---------------------------------------------------------------------------------------------------------
+    def pawns_on_ranks_valid(self, ppiecetypes):
+        for i in range(self.boardwidth):
+            for j in [0, self.boardheight - 1]:
+                if self.squares[j][i] != 0:
+                    pt = ppiecetypes[abs(self.squares[j][i]) - 1]
+                    if pt.name == "Pawn":
+                        return False
+        return True
+#---------------------------------------------------------------------------------------------------------
+    def max_one_king_per_side(self, ppiecetypes):
+        #There being AT LEAST one King per side is implicitly checked in eval
+        whitekingcount = 0
+        blackkingcount = 0
+        for i in range(self.boardwidth):
+            for j in range(self.boardheight):
+                if self.squares[j][i] != 0:
+                    pt = ppiecetypes[abs(self.squares[j][i]) - 1]
+                    if pt.name == "King":
+                        if self.squares[j][i] > 0:
+                            whitekingcount += 1
+                            if whitekingcount > 1:
+                                return False
+                        if self.squares[j][i] < 0:
+                            blackkingcount += 1
+                            if blackkingcount > 1:
+                                return False
+        return True
+#---------------------------------------------------------------------------------------------------------
