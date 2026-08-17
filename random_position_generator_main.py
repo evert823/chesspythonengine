@@ -8,6 +8,10 @@ def load_template(positionfilename):
                                     os.path.join(myworkpath, "positions_verify", f"{positionfilename}.json"))
     rpg.is_valid_position(cg=rpg.MyChessGame)
 
+    rpg.generate_one_position()
+    rpg.cgVerifyer.SaveAsJsonFile(os.path.join(myworkpath, "games_verify", "fairystockfishtestset.json"),
+                                    os.path.join(myworkpath, "randompositions", f"from_{positionfilename}.json"))
+
 #myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 #myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")
 myworkpath = os.path.join("C:\\", "Users", "Evert Jan", "pythonprojects", "chesspython_nogithub")

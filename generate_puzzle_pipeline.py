@@ -120,8 +120,11 @@ def validate_predecessors(i: int):
         mate_score = fsph.run_position(fen=myfen, depth=mydepth)
         if lnr % 20 == 0:
             log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score}")
-        if my_expected_mate_score > 0 and mate_score > 3:
-            log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score} byproduct")
+        if mate_score:
+            if mate_score < -3:
+                log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score} byproduct")
+            if mate_score > 3:
+                log(f"{lnr} fen {myfen} mate_score {mate_score} expecting {my_expected_mate_score} byproduct")
         if verbose == True:
             print(f"fen {myfen} mate_score {mate_score}")
         if mate_score == my_expected_mate_score:
@@ -130,18 +133,10 @@ def validate_predecessors(i: int):
     fsph.close_engine()
 
 def PiecelistForUncapture_from_iteration(i):
-    if i == 0:
-        return ["Rook", "Guard"]
-    if i == 1:
-        return ["Rook", "Guard"]
-    if i == 2:
-        return ["Rook", "Guard"]
-    if i == 3:
-        return ["Rook", "Guard"]
     return []
 
 verbose = False
-max_appr_result_iteration = 500
+max_appr_result_iteration = 700
 
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")

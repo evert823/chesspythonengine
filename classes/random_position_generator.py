@@ -1,5 +1,6 @@
 from classes.chess_game import ChessGame
 import copy
+import random
 
 class RandomPositionGenerator:
     def __init__(self, pworkpath, pjsonsourcepath):
@@ -14,9 +15,10 @@ class RandomPositionGenerator:
     def copy_walls(self, fromgame: ChessGame, togame: ChessGame):
         for j in range(fromgame.mainposition.boardheight):
             for i in range(fromgame.mainposition.boardwidth):
-                pt = fromgame.ppiecetypes[abs(fromgame.mainposition.squares[j][i]) - 1]
-                if pt.name == "Wall":
-                    togame.mainposition.squares[j][i] = fromgame.mainposition.squares[j][i]
+                if fromgame.mainposition.squares[j][i] != 0:
+                    pt = fromgame.piecetypes[abs(fromgame.mainposition.squares[j][i]) - 1]
+                    if pt.name == "Wall":
+                        togame.mainposition.squares[j][i] = fromgame.mainposition.squares[j][i]
 
     def is_valid_position(self, cg: ChessGame):
         pawns_valid = cg.mainposition.pawns_on_ranks_valid(ppiecetypes=cg.piecetypes)
@@ -36,6 +38,72 @@ class RandomPositionGenerator:
 
         print(cg.mainposition.movelist_totalfound)
 
-    def generate_main(self):
+    def _pick_k(self, k, size):
+        n = random.randint(1, 50)
+        if k == 0:
+            if n <= 35:
+                return k
+            else:
+                return k + 1
+        elif k == size - 1:
+            if n <= 35:
+                return k
+            else:
+                return k - 1
+        else:
+            if n <= 30:
+                return k
+            elif n <= 40:
+                return k + 1
+            else:
+                return k - 1
+
+
+    def _put_piece_square(self, sqvalue, i, j,
+                          toposition, number_of_attempts):
+        '''
+        Put a desired piece on a target square [j][i]
+        Piece given by sqvalue which is negative or positive integer
+        Based on probability exactly on or near the target square
+        Number of attempts controlled by parameter
+        '''
+        piece_placed = False
+        attempts = 0
+        while piece_placed == False and attempts < number_of_attempts:
+            attempts += 1
+            i2 = self._pick_k(k=i, size=toposition.boardwidth)
+            j2 = self._pick_k(k=j, size=toposition.boardheight)
+            if toposition.squares[j2][i2] == 0:
+                toposition.squares[j2][i2] = sqvalue
+                piece_placed = True
+
+    def generate_one_position(self):
         self.init_verifyer()
         self.copy_walls(fromgame=self.MyChessGame, togame=self.cgVerifyer)
+
+        self.cgVerifyer.mainposition.colourtomove = self.MyChessGame.mainposition.colourtomove
+        self.cgVerifyer.mainposition.whitekinghasmoved = self.MyChessGame.mainposition.whitekinghasmoved
+        self.cgVerifyer.mainposition.whitekingsiderookhasmoved = self.MyChessGame.mainposition.whitekingsiderookhasmoved
+        self.cgVerifyer.mainposition.whitequeensiderookhasmoved = self.MyChessGame.mainposition.whitequeensiderookhasmoved
+        self.cgVerifyer.mainposition.blackkinghasmoved = self.MyChessGame.mainposition.blackkinghasmoved
+        self.cgVerifyer.mainposition.blackkingsiderookhasmoved = self.MyChessGame.mainposition.blackkingsiderookhasmoved
+        self.cgVerifyer.mainposition.blackqueensiderookhasmoved = self.MyChessGame.mainposition.blackqueensiderookhasmoved
+
+        for j in range(self.MyChessGame.mainposition.boardheight):
+            for i in range(self.MyChessGame.mainposition.boardwidth):
+                if self.MyChessGame.mainposition.squares[j][i] != 0:
+                    pt = self.MyChessGame.piecetypes[abs(self.MyChessGame.mainposition.squares[j][i]) - 1]
+                    if pt.name == "King":
+                        self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
+                                            i=i, j=j,
+                                            toposition=self.cgVerifyer.mainposition,
+                                            number_of_attempts=100)
+        for j in range(self.MyChessGame.mainposition.boardheight):
+            for i in range(self.MyChessGame.mainposition.boardwidth):
+                if self.MyChessGame.mainposition.squares[j][i] != 0:
+                    pt = self.MyChessGame.piecetypes[abs(self.MyChessGame.mainposition.squares[j][i]) - 1]
+                    if pt.name not in ["Wall", "King"]:
+                        self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
+                                            i=i, j=j,
+                                            toposition=self.cgVerifyer.mainposition,
+                                            number_of_attempts=100)
