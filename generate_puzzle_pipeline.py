@@ -136,7 +136,7 @@ def PiecelistForUncapture_from_iteration(i):
     return []
 
 verbose = False
-max_appr_result_iteration = 700
+max_appr_result_iteration = 250
 
 myworkpath = os.path.join(os.sep, "home", "administrator", "pythonwork")
 myjsonsourcepath = os.path.join(os.sep, "home", "administrator", "chesspython")

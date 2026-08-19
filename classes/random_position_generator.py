@@ -76,9 +76,11 @@ class RandomPositionGenerator:
             if toposition.squares[j2][i2] == 0:
                 toposition.squares[j2][i2] = sqvalue
                 piece_placed = True
+        return piece_placed
 
     def generate_one_position(self):
         self.init_verifyer()
+        lost_pieces_count = 0
         self.copy_walls(fromgame=self.MyChessGame, togame=self.cgVerifyer)
 
         self.cgVerifyer.mainposition.colourtomove = self.MyChessGame.mainposition.colourtomove
@@ -94,16 +96,22 @@ class RandomPositionGenerator:
                 if self.MyChessGame.mainposition.squares[j][i] != 0:
                     pt = self.MyChessGame.piecetypes[abs(self.MyChessGame.mainposition.squares[j][i]) - 1]
                     if pt.name == "King":
-                        self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
+                        piece_placed = self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
                                             i=i, j=j,
                                             toposition=self.cgVerifyer.mainposition,
                                             number_of_attempts=100)
+                        if piece_placed == False:
+                            lost_pieces_count += 1
         for j in range(self.MyChessGame.mainposition.boardheight):
             for i in range(self.MyChessGame.mainposition.boardwidth):
                 if self.MyChessGame.mainposition.squares[j][i] != 0:
                     pt = self.MyChessGame.piecetypes[abs(self.MyChessGame.mainposition.squares[j][i]) - 1]
                     if pt.name not in ["Wall", "King"]:
-                        self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
+                        piece_placed = self._put_piece_square(sqvalue=self.MyChessGame.mainposition.squares[j][i],
                                             i=i, j=j,
                                             toposition=self.cgVerifyer.mainposition,
                                             number_of_attempts=100)
+                        if piece_placed == False:
+                            lost_pieces_count += 1
+
+        return lost_pieces_count
