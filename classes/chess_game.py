@@ -22,6 +22,7 @@ class ChessGame:
         self.display_when_n_plies_gt = 8
         self.positionstack_size = 25
         self.positionstack = []
+        self.SavePieceDefinitionJSONOnLoad = False
 #---------------------------------------------------------------------------------------------------------
     def init_positionstack(self):
         self.positionstack.clear()
@@ -66,7 +67,10 @@ class ChessGame:
     def LoadPiece(self, ppiecename, pworkpath, pjsonsourcepath):
         mytype = ChessPieceType()
         mytype.LoadFromJsonFile(os.path.join(pjsonsourcepath, "piecedefinitions", f"{ppiecename}.json"))
-        mytype.SaveAsJsonFile(os.path.join(pworkpath, "piecedefinitions_verify", f"{ppiecename}.json"))
+
+        if self.SavePieceDefinitionJSONOnLoad == True:
+            mytype.SaveAsJsonFile(os.path.join(pworkpath, "piecedefinitions_verify", f"{ppiecename}.json"))
+
         self.piecetypes.append(mytype)
 #---------------------------------------------------------------------------------------------------------
     def SynchronizePosition(self, frompos, topos):

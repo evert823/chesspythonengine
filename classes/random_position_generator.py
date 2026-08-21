@@ -23,20 +23,17 @@ class RandomPositionGenerator:
     def is_valid_position(self, cg: ChessGame):
         pawns_valid = cg.mainposition.pawns_on_ranks_valid(ppiecetypes=cg.piecetypes)
         if pawns_valid == False:
-            print("Invalid pawns found")
-            return False
+            return (False, "Invalid pawns found")
 
         max_one_king = cg.mainposition.max_one_king_per_side(ppiecetypes=cg.piecetypes)
         if max_one_king == False:
-            print("More than one King on one of the sides")
-            return False
+            return (False, "More than one King on one of the sides")
 
         myval, mymvidx, _ = cg.Calculation_n_plies(1)
         if cg.mainposition.POKingIsInCheck() == True:
-            print("The King can be taken")
-            return False
+            return (False, "The King can be taken")
 
-        print(cg.mainposition.movelist_totalfound)
+        return (True, f"Evaluation {myval} - There were {cg.mainposition.movelist_totalfound} legal moves")
 
     def _pick_k(self, k, size):
         n = random.randint(1, 50)
