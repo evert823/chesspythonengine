@@ -120,5 +120,4 @@ class FairyStockfishProcessHandler:
         for line in Lines:
             myfen = line.replace("\n", "").strip()
             mate_score = self.run_position(fen=myfen, depth=depth)
-            if self.verbose == True:
-                print(f"fen {myfen} mate_score {mate_score}")
+            print(f"fen {myfen} mate_score {mate_score}")
