@@ -85,18 +85,12 @@ class FairyStockfishProcessHandler:
         fen2 = fen2.replace("X", "*")
 
         self.send(cmd=f"position fen {fen2}")
-        self.send(cmd=f"go depth {str(depth)}")
-        datetime_started = datetime.now()
+        movetime_ms = int(self.max_sec_per_position * 1000)
+        self.send(cmd=f"go depth {str(depth)} movetime {movetime_ms}")
         while True:
-            datetime_check = datetime.now()
-            elapsed_seconds = (datetime_check - datetime_started).total_seconds()
             line = self.engine.stdout.readline().strip()
             if self.verbose == True:
                 print(line)
-            if elapsed_seconds > self.max_sec_per_position:
-                self.send(cmd=f"stop")
-                print(f"stopped after {self.max_sec_per_position} seconds at {line}")
-                break
             if line.startswith("info depth") and line.find(" score ") > -1:
                 mate_score = self.detect_fsf_mate_score(line)
             if line.startswith("bestmove"):

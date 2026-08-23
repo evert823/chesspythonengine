@@ -52,7 +52,7 @@ for i in range(50):
     fenfile.write(f"{myfen}\n")
 
 fenfile.close()
-log(message="Finished generating posiitons")
+log(message="Finished generating positions")
 
 fsph = FairyStockfishProcessHandler()
 #fsph.verbose = True
