@@ -1,6 +1,7 @@
 import subprocess
 import re
 import time
+from datetime import datetime
 
 ENGINE_PATH = "/home/administrator/Fairy-Stockfish/src/stockfish-largeboards"
 INI_PATH = "/home/administrator/stockfish_use/variant_inifiles/fairystockfishtestset.ini"
@@ -9,6 +10,7 @@ VARIANT_NAME = "FairyStockfishTestset"
 class FairyStockfishProcessHandler:
     def __init__(self):
         self.verbose = False
+        self.max_sec_per_position = 180.0
         self.engine = None
 
     def create_process(self):
@@ -84,10 +86,17 @@ class FairyStockfishProcessHandler:
 
         self.send(cmd=f"position fen {fen2}")
         self.send(cmd=f"go depth {str(depth)}")
+        datetime_started = datetime.now()
         while True:
+            datetime_check = datetime.now()
+            elapsed_seconds = (datetime_check - datetime_started).total_seconds()
             line = self.engine.stdout.readline().strip()
             if self.verbose == True:
                 print(line)
+            if elapsed_seconds > self.max_sec_per_position:
+                self.send(cmd=f"stop")
+                print(f"stopped after {self.max_sec_per_position} seconds at {line}")
+                break
             if line.startswith("info depth") and line.find(" score ") > -1:
                 mate_score = self.detect_fsf_mate_score(line)
             if line.startswith("bestmove"):

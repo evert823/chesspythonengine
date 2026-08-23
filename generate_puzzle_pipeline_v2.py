@@ -52,9 +52,12 @@ for i in range(50):
     fenfile.write(f"{myfen}\n")
 
 fenfile.close()
+log(message="Finished generating posiitons")
 
 fsph = FairyStockfishProcessHandler()
 #fsph.verbose = True
 fsph.initial_setup()
+log(message=f"Calculation time per position threshold {fsph.max_sec_per_position} seconds")
+log(message="Fairy-Stockfish engine setup finished and submitting 1st position now")
 run_positions_from_file(fsph=fsph, pfilepath=fenfilepath, depth=25)
 fsph.close_engine()
