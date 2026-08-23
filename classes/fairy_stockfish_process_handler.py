@@ -113,11 +113,3 @@ class FairyStockfishProcessHandler:
                 raise Exception("FSF setup not OK")
         print("verify_fsf_behaviour OK")
 
-    def run_positions_from_file(self, pfilepath: str, depth: int):
-        file1 = open(pfilepath, 'r', encoding='utf-8')
-        Lines = file1.readlines()
-        file1.close()
-        for line in Lines:
-            myfen = line.replace("\n", "").strip()
-            mate_score = self.run_position(fen=myfen, depth=depth)
-            print(f"fen {myfen} mate_score {mate_score}")
